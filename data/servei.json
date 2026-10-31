@@ -1,0 +1,279 @@
+{
+  "nom": {
+    "va": "Servei especial d'autobús poble ⇄ platja",
+    "es": "Servicio especial de autobús pueblo ⇄ playa",
+    "en": "Special town ⇄ beach bus service"
+  },
+  "gratuit": true,
+  "vigent_des_de": "2026-10-22",
+  "vigent_fins_a": null,
+  "font": {
+    "titol": "DANA - Servei especial d'autobús a Oliva entre el poble i la platja",
+    "data_avis": "2026-10-22",
+    "url": {
+      "va": "https://www.oliva.es/va/DANA",
+      "es": "https://www.oliva.es/es/DANA"
+    },
+    "comprovat": "2026-10-31"
+  },
+  "eixides": {
+    "laborables": [
+      "07:30",
+      "08:30",
+      "09:30",
+      "10:30",
+      "12:30",
+      "13:30",
+      "17:45",
+      "18:30"
+    ],
+    "caps_de_setmana_i_festius": [
+      "09:00",
+      "11:00",
+      "13:00",
+      "18:00"
+    ]
+  },
+  "parades": [
+    {
+      "num": 1,
+      "punt": "joan-fuster",
+      "nom": {
+        "va": "Passeig de Joan Fuster (CEIP Lluís Vives)",
+        "es": "Paseo de Joan Fuster (CEIP Lluís Vives)"
+      },
+      "lat": 38.9246809,
+      "lon": -0.1215502,
+      "minuts_des_de_eixida": 0,
+      "estimat": false
+    },
+    {
+      "num": 2,
+      "punt": "lluis-vives-taxis",
+      "nom": {
+        "va": "Passeig de Lluís Vives (parada de taxis)",
+        "es": "Paseo de Lluís Vives (parada de taxis)"
+      },
+      "lat": 38.921137,
+      "lon": -0.1172105,
+      "minuts_des_de_eixida": 2,
+      "estimat": true
+    },
+    {
+      "num": 3,
+      "punt": "brines-hort-de-palau",
+      "nom": {
+        "va": "Passeig de Francisco Brines (CEIP Hort de Palau)",
+        "es": "Paseo de Francisco Brines (CEIP Huerto de Palau)"
+      },
+      "lat": 38.9206735,
+      "lon": -0.1128734,
+      "minuts_des_de_eixida": 3,
+      "estimat": true
+    },
+    {
+      "num": 4,
+      "punt": "brines-sant-josep",
+      "nom": {
+        "va": "Passeig de Francisco Brines (CEIP Sant Josep de la Muntanya)",
+        "es": "Paseo de Francisco Brines (CEIP Sant Josep de la Montaña)"
+      },
+      "lat": 38.9247897,
+      "lon": -0.1070542,
+      "minuts_des_de_eixida": 4,
+      "estimat": true
+    },
+    {
+      "num": 5,
+      "punt": "via-ronda-primera",
+      "nom": {
+        "va": "Via de Ronda (primera parada)",
+        "es": "Vía de Ronda (primera parada)"
+      },
+      "lat": 38.9265252,
+      "lon": -0.0943053,
+      "minuts_des_de_eixida": 8,
+      "estimat": true
+    },
+    {
+      "num": 6,
+      "punt": "via-ronda-canyades",
+      "nom": {
+        "va": "Via de Ronda (altura del camí de les Canyades)",
+        "es": "Vía de Ronda (altura del camino de las Cañadas)"
+      },
+      "lat": 38.9252233,
+      "lon": -0.0919995,
+      "minuts_des_de_eixida": 8,
+      "estimat": true
+    },
+    {
+      "num": 7,
+      "punt": "via-ronda-illa-de-xipre",
+      "nom": {
+        "va": "Via de Ronda (altura del carrer de l'Illa de Xipre)",
+        "es": "Vía de Ronda (altura de la calle de la Isla de Chipre)"
+      },
+      "lat": 38.9232878,
+      "lon": -0.089995,
+      "minuts_des_de_eixida": 9,
+      "estimat": true
+    },
+    {
+      "num": 8,
+      "punt": "placa-europa",
+      "nom": {
+        "va": "Plaça d'Europa",
+        "es": "Plaza de Europa"
+      },
+      "lat": 38.9219252,
+      "lon": -0.0861289,
+      "minuts_des_de_eixida": 10,
+      "estimat": true
+    },
+    {
+      "num": 9,
+      "punt": "sector5-ozieri",
+      "nom": {
+        "va": "Sector 5 (carrer d'Ozieri)",
+        "es": "Sector 5 (calle de Ozieri)"
+      },
+      "lat": 38.9160349,
+      "lon": -0.0798671,
+      "minuts_des_de_eixida": 13,
+      "estimat": true
+    },
+    {
+      "num": 10,
+      "punt": "sector5-napols",
+      "nom": {
+        "va": "Sector 5 (carrer de Nàpols)",
+        "es": "Sector 5 (calle de Nápoles)"
+      },
+      "lat": 38.9178328,
+      "lon": -0.0833813,
+      "minuts_des_de_eixida": 14,
+      "estimat": true
+    },
+    {
+      "num": 11,
+      "punt": "comarca-marina-pont",
+      "nom": {
+        "va": "Carrer de la Comarca de la Marina (altura del pont)",
+        "es": "Calle de la Comarca de la Marina (altura del puente)"
+      },
+      "lat": 38.9192114,
+      "lon": -0.0846409,
+      "minuts_des_de_eixida": 15,
+      "estimat": true
+    },
+    {
+      "num": 12,
+      "punt": "via-ronda-illa-de-xipre",
+      "nom": {
+        "va": "Via de Ronda (altura del carrer de l'Illa de Xipre)",
+        "es": "Vía de Ronda (altura de la calle de la Isla de Chipre)"
+      },
+      "lat": 38.9232878,
+      "lon": -0.089995,
+      "minuts_des_de_eixida": 16,
+      "estimat": true
+    },
+    {
+      "num": 13,
+      "punt": "via-ronda-canyades",
+      "nom": {
+        "va": "Via de Ronda (altura del camí de les Canyades)",
+        "es": "Vía de Ronda (altura del camino de las Cañadas)"
+      },
+      "lat": 38.9252233,
+      "lon": -0.0919995,
+      "minuts_des_de_eixida": 17,
+      "estimat": true
+    },
+    {
+      "num": 14,
+      "punt": "via-ronda-primera",
+      "nom": {
+        "va": "Via de Ronda (primera parada)",
+        "es": "Vía de Ronda (primera parada)"
+      },
+      "lat": 38.9265252,
+      "lon": -0.0943053,
+      "minuts_des_de_eixida": 18,
+      "estimat": true
+    },
+    {
+      "num": 15,
+      "punt": "llauradors-club-nautic",
+      "nom": {
+        "va": "Avinguda dels Llauradors (junt al Club Nàutic)",
+        "es": "Avenida de los Labradores (junto al Club Náutico)"
+      },
+      "lat": 38.9294189,
+      "lon": -0.0949366,
+      "minuts_des_de_eixida": 18,
+      "estimat": true
+    },
+    {
+      "num": 16,
+      "punt": "llauradors-assagador-carro",
+      "nom": {
+        "va": "Avinguda dels Llauradors (altura del carrer de l'Assagador de Carro)",
+        "es": "Avenida de los Labradores (altura de la calle del Azagador de Carro)"
+      },
+      "lat": 38.9336409,
+      "lon": -0.1026261,
+      "minuts_des_de_eixida": 20,
+      "estimat": true
+    },
+    {
+      "num": 17,
+      "punt": "brines-pont-de-bolo",
+      "nom": {
+        "va": "Avinguda de Francisco Brines (passat el camí del Pont de Bolo)",
+        "es": "Avenida de Francisco Brines (pasado el camino del Pont de Bolo)"
+      },
+      "lat": 38.9248187,
+      "lon": -0.107704,
+      "minuts_des_de_eixida": 23,
+      "estimat": true
+    },
+    {
+      "num": 18,
+      "punt": "brines-poliesportiu",
+      "nom": {
+        "va": "Avinguda de Francisco Brines (Poliesportiu)",
+        "es": "Avenida de Francisco Brines (Polideportivo)"
+      },
+      "lat": 38.9239902,
+      "lon": -0.1113179,
+      "minuts_des_de_eixida": 24,
+      "estimat": true
+    },
+    {
+      "num": 19,
+      "punt": "sisteron-ies-gregori-maians",
+      "nom": {
+        "va": "Avinguda de Sisteron (IES Gregori Maians)",
+        "es": "Avenida de Sisteron (IES Gregori Maians)"
+      },
+      "lat": 38.9231616,
+      "lon": -0.1149318,
+      "minuts_des_de_eixida": 25,
+      "estimat": true
+    },
+    {
+      "num": 20,
+      "punt": "joan-fuster",
+      "nom": {
+        "va": "Passeig de Joan Fuster (CEIP Lluís Vives)",
+        "es": "Paseo de Joan Fuster (CEIP Lluís Vives)"
+      },
+      "lat": 38.9246809,
+      "lon": -0.1215502,
+      "minuts_des_de_eixida": 26,
+      "estimat": true
+    }
+  ]
+}
