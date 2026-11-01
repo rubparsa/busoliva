@@ -80,7 +80,7 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
   display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin-right: auto;
   font: 1rem/1.2 var(--xifres); color: var(--cap-text); text-decoration: none;
 }
-.icona-bus { flex: 0 0 auto; color: var(--cap-text); }
+.icona-bus { flex: 0 0 auto; display: block; }
 .eines-cap { display: flex; align-items: center; gap: .375rem; margin-left: auto; }
 .boto-icona {
   display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;

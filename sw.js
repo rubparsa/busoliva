@@ -2,14 +2,14 @@
 // - Estructura de l'app: memòria cau prèvia (canvieu VERSIO quan publiqueu canvis en l'app).
 // - Dades (data/*): primer per xarxa; si no n'hi ha, la còpia desada, amb la data en què es va desar.
 // - Tessel·les del mapa i altres orígens: no es toquen (van directes a la xarxa).
-const VERSIO = '6';
+const VERSIO = '7';
 const CAU_APP = 'busoliva-app-' + VERSIO;
 const CAU_DADES = 'busoliva-dades';
 const APP = [
   './', 'css/app.css', 'manifest.webmanifest',
   'js/app.js', 'js/i18n.js', 'js/servei.js', 'js/diagrama.js', 'js/mapa.js',
   'fonts/lexend-latin-400-normal.woff2', 'fonts/archivo-black-latin-400-normal.woff2',
-  'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
+  'icons/icona.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
 ];
 const DADES = ['data/servei.json', 'data/festius.json', 'data/avisos.json', 'data/recorregut.geojson'];
 const BASE = new URL('./', self.location).href;
