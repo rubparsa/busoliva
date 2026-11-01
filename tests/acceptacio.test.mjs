@@ -307,8 +307,10 @@ test('10. axe sense violacions serious/critical, sense desplaçament horitzontal
   for (const amplada of [360, 1280]) {
     const { context, page, errors } = await obri({ hora: madrid('2026-11-02', '09:00'), amplada, geolocation: { latitude: p8.lat + 0.002, longitude: p8.lon } });
     const problemes = [];
-    const revisa = async (on) => {
-      const resultat = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+    // `zona` limita la revisió (p. ex. a la capçalera amb un menú obert, que tapa un moment el contingut de davall).
+    const revisa = async (on, zona) => {
+      const axe = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']);
+      const resultat = await (zona ? axe.include(zona) : axe).analyze();
       resultat.violations
         .filter((v) => v.impact === 'serious' || v.impact === 'critical')
         .forEach((v) => problemes.push(`${amplada}px · ${on} · ${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`));
@@ -330,15 +332,23 @@ test('10. axe sense violacions serious/critical, sense desplaçament horitzontal
     }
     // Modes d'alt contrast i de text gran (P2)
     await vesA(page, 'sobre');
+    // En pantalles estretes, contrast, text gran i fosc són dins del menú «Aa».
+    if (await page.isVisible('#ajustos-boto')) {
+      await page.click('#ajustos-boto');
+      await revisa("menú «Aa» obert", '.capcalera');
+    }
     await page.click('[data-mode="contrast"]');
     await page.click('[data-mode="text"]');
+    if (await page.isVisible('#ajustos-boto')) await page.keyboard.press('Escape');
     for (const vista of ['proper', 'horari', 'sobre']) {
       await vesA(page, vista);
       await revisa(`${vista} (alt contrast i text gran)`);
     }
     // Mode fosc
+    if (await page.isVisible('#ajustos-boto')) await page.click('#ajustos-boto');
     await page.click('[data-mode="contrast"]');
     await page.click('[data-mode="text"]');
+    if (await page.isVisible('#ajustos-boto')) await page.keyboard.press('Escape');
     await page.emulateMedia({ colorScheme: 'dark' });
     for (const vista of ['proper', 'horari', 'linia', 'mapa', 'sobre']) {
       await vesA(page, vista);

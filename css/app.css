@@ -93,10 +93,30 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
 .icona-sol, html.fosc .icona-lluna { display: none; }
 html.fosc .icona-sol { display: block; }
 .marca-lloc { font-family: 'Lexend', sans-serif; }
-@media (max-width: 26rem) {
-  .marca-lloc { display: none; }
-  /* En pantalles estretes només es veu la icona; el títol queda per als lectors de pantalla. */
-  .marca-text { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ajustos { display: flex; gap: .375rem; }
+.ajustos-boto { display: none; }
+.etq-mode { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Pantalles estretes: títol en dues línies i contrast, text gran i fosc dins del menú «Aa». */
+@media (max-width: 36rem) {
+  .capcalera-dins { flex-wrap: nowrap; }
+  .marca { min-width: 0; font-size: .9375rem; }
+  .marca-textos { display: flex; flex-direction: column; }
+  .eines-cap { flex: 0 0 auto; }
+  .codi-idioma { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .marca-lloc { font-size: .8125rem; }
+  .eines-cap { position: relative; }
+  .ajustos-boto { display: inline-flex; font: 1rem/1 var(--xifres); }
+  .ajustos-boto[aria-expanded="true"] { background: var(--cap-text); color: var(--cap-fons); }
+  .ajustos {
+    position: absolute; right: 0; top: calc(100% + .375rem); z-index: 1100;
+    flex-direction: column; min-width: 13rem; padding: .375rem;
+    background: var(--cap-fons); border: 1px solid var(--vora); border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  }
+  .ajustos:not(.obert) { display: none; }
+  .ajustos .boto-icona { width: 100%; justify-content: flex-start; gap: .75rem; padding: 0 .75rem; border: 0; border-radius: 8px; font: inherit; font-weight: 700; }
+  .ajustos .boto-icona:hover { background: rgba(127, 127, 127, .3); }
+  .ajustos .etq-mode { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
 }
 .idiomes { position: relative; }
 .idioma-boto {

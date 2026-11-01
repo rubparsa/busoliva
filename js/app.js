@@ -615,6 +615,24 @@ function inicia() {
   });
   if (sistemaFosc && sistemaFosc.addEventListener) sistemaFosc.addEventListener('change', aplicaModes);
   iniciaSelectorIdioma(canviaIdioma);
+  // Menú «Aa» (només en pantalles estretes): contrast, text gran i mode fosc.
+  const ajustosBoto = $('#ajustos-boto');
+  const ajustos = $('#ajustos');
+  const tancaAjustos = (enfoca) => {
+    ajustos.classList.remove('obert');
+    ajustosBoto.setAttribute('aria-expanded', 'false');
+    if (enfoca) ajustosBoto.focus();
+  };
+  ajustosBoto.addEventListener('click', () => {
+    const obri = !ajustos.classList.contains('obert');
+    ajustos.classList.toggle('obert', obri);
+    ajustosBoto.setAttribute('aria-expanded', String(obri));
+    if (obri) ajustos.querySelector('button').focus();
+  });
+  document.addEventListener('click', (e) => {
+    if (ajustos.classList.contains('obert') && !(e.target.closest && e.target.closest('.eines-cap'))) tancaAjustos(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ajustos.classList.contains('obert')) tancaAjustos(true); });
   $('#boto-ubicacio').addEventListener('click', localitza);
   $('#boto-favorita').addEventListener('click', commutaFavorita);
   $('#boto-comparteix').addEventListener('click', comparteix);

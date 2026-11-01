@@ -511,7 +511,7 @@ export function marcaIdioma() {
     else b.removeAttribute('aria-current');
   });
   const bandera = document.querySelector('[data-idioma="' + actual + '"] svg');
-  document.getElementById('idioma-actual').innerHTML = (bandera ? bandera.outerHTML : '') + CODIS[actual];
+  document.getElementById('idioma-actual').innerHTML = (bandera ? bandera.outerHTML : '') + '<span class="codi-idioma">' + CODIS[actual] + '</span>';
 }
 
 // Idioma desat; si no n'hi ha, el del navegador; si no és cap dels tres, valencià.
