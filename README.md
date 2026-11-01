@@ -75,7 +75,7 @@ Serveix per a calcular en el mòbil la distància a peu pel carrer fins a cada p
 
 Cada festiu té `data`, `nom` (en `va`, `es` i `en`), `ambit` (`nacional`, `autonomic` o `local`) i `font` (`nom` i `url` del BOE, del DOGV o de l'Ajuntament). Els dies feiners que són festius usen l'horari de dissabtes, diumenges i festius.
 
-> Pendent: falten els festius locals d'Oliva de 2027. Afegiu-los amb `"ambit": "local"` quan es publiquen en el DOGV o en la web de l'Ajuntament. Cal confirmar si el 7-12-2026 és festiu local o només dia de lliure disposició escolar.
+> Pendent: falten els festius locals d'Oliva de 2027. Afegiu-los amb `"ambit": "local"` quan es publiquen en el DOGV o en la web de l'Ajuntament.
 
 ### Avisos: `data/avisos.json`
 
@@ -127,7 +127,7 @@ Després de cada canvi, n'hi ha prou de tornar a pujar els fitxers a `main`. Rec
 
 - **Coordenades** de les parades: són les candidates del servei d'estiu. Les de les parades 15 i 18 són provisionals.
 - **Hores de pas** per les parades intermèdies: l'avís no les dona.
-- **Festius**: els nacionals i autonòmics s'han de contrastar amb el text del BOE i del DOGV. Falten els locals de 2027 i confirmar el 7-12-2026.
+- **Festius**: els nacionals i autonòmics s'han de contrastar amb el text del BOE i del DOGV. Falten els locals de 2027.
 - **Xarxa de carrers**: buida fins que s'execute `npm run carrers` amb connexió.
 
 ## Privacitat

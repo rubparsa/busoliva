@@ -258,8 +258,14 @@ export function distanciesAPeu(servei, graf, pos) {
 }
 
 // L'última parada només és d'arribada: no compta per a agafar el bus.
-export function properes(distancies, quantes) {
+// Entre parades a la mateixa distància (els mateixos minuts a peu), si hi ha un bus que
+// ha eixit fa menys d'una volta, va primer la més avançada en el recorregut (és més
+// probable que encara no hi haja passat); si no, la més pròxima a l'eixida.
+export function properes(distancies, quantes, busEnCurs) {
+  const ordre = distancies.map((d) => d.parada);
   return distancies.slice(0, -1)
-    .sort((a, b) => a.metres - b.metres || a.parada.num - b.parada.num)
+    .sort((a, b) => minutsAPeu(a.metres) - minutsAPeu(b.metres) ||
+      (busEnCurs ? -1 : 1) * (ordre.indexOf(a.parada) - ordre.indexOf(b.parada)) ||
+      a.metres - b.metres)
     .slice(0, quantes);
 }

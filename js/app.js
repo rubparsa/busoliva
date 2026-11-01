@@ -121,9 +121,7 @@ function pintaProper(ara) {
   const nota = $('#proper-estimat');
   nota.hidden = !(p.estimat || senseHoraPas(p));
   if (senseHoraPas(p)) {
-    const curs = S.enCurs(estat.servei, estat.festius, ara);
-    nota.textContent = t('proper.eixidaParada1', { nom: nom(parades()[0]), durada: durada(estat.servei.durada_volta_minuts) }) +
-      (curs ? ' ' + t('proper.enCurs', { hora: horaText(curs.hora) }) : '');
+    nota.textContent = t('proper.eixidaParada1', { nom: nom(parades()[0]), durada: durada(estat.servei.durada_volta_minuts) });
   } else if (p.estimat) {
     nota.textContent = t('proper.estimat');
   }
@@ -203,7 +201,7 @@ function pintaProperes() {
   const caixa = $('#ubic-properes');
   $('#ubic-estat').textContent = estat.ubicEstat ? t(estat.ubicEstat) : '';
   if (!estat.ubicacio) { caixa.hidden = true; return; }
-  $('#llista-properes').innerHTML = S.properes(estat.distancies, 3).map((r) =>
+  $('#llista-properes').innerHTML = S.properes(estat.distancies, 3, !!S.enCurs(estat.servei, estat.festius, Date.now())).map((r) =>
     botoParada(r.parada, t(r.aprox ? 'ubic.distanciaAprox' : 'ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
   caixa.hidden = false;
 }
@@ -219,7 +217,7 @@ function localitza() {
       estat.ubicacio = ubicacio;
       estat.distancies = S.distanciesAPeu(estat.servei, graf, ubicacio);
       estat.ubicEstat = '';
-      tria(S.properes(estat.distancies, 1)[0].parada.num, false);
+      tria(S.properes(estat.distancies, 1, !!S.enCurs(estat.servei, estat.festius, Date.now()))[0].parada.num, false);
     });
   }, (error) => {
     if (error.code === 1) desa('ubicacio', null);
