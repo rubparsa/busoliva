@@ -11,7 +11,7 @@ L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial,
 - **On vols anar?**: tria la parada del sentit correcte (és un circuit) i dona l'hora d'arribada aproximada.
 - **Horari complet**: dues taules (de dilluns a divendres; dissabtes, diumenges i festius) amb la pròxima eixida destacada.
 - **Mapa** (Leaflet i OpenStreetMap; necessita connexió) i **diagrama de la línia** (funciona sense connexió).
-- **Avisos** amb data d'inici i de fi, bàner del servei temporal, i data de comprovació i enllaç a la font sempre visibles.
+- **Avisos** amb data d'inici i de fi i bàner del servei temporal. La data de comprovació i l'enllaç a la font són en «Sobre l'app» i en els cartells.
 - **Tres idiomes**: valencià (per defecte), castellà i anglès. Es recorda l'idioma triat.
 - **Sense connexió**: funciona tot menys el mapa i avisa de la data de les dades desades. Avisa quan hi ha una versió nova i explica com instal·lar-la en iOS.
 - **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`) i modes d'**alt contrast** i **text gran**.
@@ -41,7 +41,7 @@ Totes les dades són en `data/`. La interfície no té cap hora ni cap parada es
 | `eixides.laborables` | Hores d'eixida de dilluns a divendres, des de la parada 1 (`"HH:MM"`). |
 | `eixides.caps_de_setmana_i_festius` | Hores d'eixida de dissabtes, diumenges i festius. |
 | `vigent_des_de` / `vigent_fins_a` | Període del servei (`"AAAA-MM-DD"`). `vigent_fins_a` és `null` mentre no hi haja data de fi. Si ja ha passat, l'app mostra «Servei finalitzat. Consulta oliva.es». |
-| `font.comprovat` | Data en què s'ha comprovat l'avís oficial. Es mostra sempre en l'app. |
+| `font.comprovat` | Data en què s'ha comprovat l'avís oficial. Es mostra en «Sobre l'app» i en els cartells. |
 | `font.url`, `font.titol`, `font.data_avis` | Enllaç i dades de l'avís oficial. |
 | `gratuit` | `true` si el servei és gratuït. |
 

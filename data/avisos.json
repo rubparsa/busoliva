@@ -1,14 +1,3 @@
 {
-  "avisos": [
-    {
-      "id": "ampliacio-zones",
-      "inici": "2026-10-22",
-      "fi": null,
-      "text": {
-        "va": "L'Ajuntament ampliarà el servei a altres zones quan s'hi puga garantir la circulació segura de l'autobús.",
-        "es": "El Ayuntamiento ampliará el servicio a otras zonas cuando se pueda garantizar la circulación segura del autobús.",
-        "en": "The Town Council will extend the service to other areas once the bus can run there safely."
-      }
-    }
-  ]
+  "avisos": []
 }

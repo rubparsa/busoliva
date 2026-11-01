@@ -379,8 +379,6 @@ function pintaComuns(ara) {
   const sv = estat.servei;
   const avui = S.diaMadrid(ara);
   $('#banner-gratuit').hidden = !sv.gratuit;
-  $('#banner-comprovat').textContent = t('banner.comprovat', { data: data(sv.font.comprovat) });
-  $('#banner-font').href = sv.font.url[idioma() === 'va' ? 'va' : 'es'];
   $('#avisos').innerHTML = estat.avisos
     .filter((a) => a.inici <= avui && (!a.fi || a.fi >= avui))
     .map((a) => '<p class="avis-oficial">' + escapa(a.text[idioma()] || a.text.va) + '</p>').join('');
