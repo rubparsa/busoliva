@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ca-ES-valencia">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Editor de parades · ferramenta interna</title>
+<link rel="stylesheet" href="../vendor/leaflet/leaflet.css">
+<style>
+  body { margin: 0; font: 15px/1.4 system-ui, sans-serif; color: #14324E; background: #F7F0E1; }
+  header, main { padding: .75rem 1rem; }
+  header { background: #14324E; color: #F7F0E1; }
+  h1 { margin: 0 0 .25rem; font-size: 1.25rem; }
+  #mapa { height: 55vh; min-height: 320px; border: 1px solid #8A7A5C; }
+  table { border-collapse: collapse; width: 100%; background: #fff; margin-top: .75rem; }
+  th, td { border-bottom: 1px solid #e6dcc6; padding: .25rem .5rem; text-align: left; vertical-align: middle; }
+  input[type="number"] { width: 5.5rem; min-height: 36px; font: inherit; }
+  input[type="checkbox"] { width: 22px; height: 22px; }
+  .avis { background: #FBE4DB; border-left: 6px solid #B23B16; padding: .5rem .75rem; margin: .5rem 0; }
+  button { min-height: 44px; padding: .5rem 1rem; font: inherit; border: 2px solid #0F5FA8; border-radius: 10px; background: #0F5FA8; color: #fff; cursor: pointer; }
+  .num { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #0F5FA8; color: #fff; font-weight: 700; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+  .coord { font-family: ui-monospace, monospace; font-size: .8125rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Editor de parades</h1>
+  <p>Ferramenta interna (no enllaçada des de l'app). Arrossega els marcadors fins a la parada real, corregeix els minuts de pas i exporta el fitxer. Després substitueix <code>data/servei.json</code> i executa <code>npm run recorregut</code>.</p>
+</header>
+<main>
+  <div id="mapa"></div>
+  <p id="avis" class="avis" role="alert" hidden></p>
+  <p><button type="button" id="exporta">Exporta servei.json</button></p>
+  <table>
+    <thead><tr><th scope="col">Núm.</th><th scope="col">Parada</th><th scope="col">Coordenades</th><th scope="col">Minuts des de l'eixida</th><th scope="col">Estimat</th></tr></thead>
+    <tbody id="files"></tbody>
+  </table>
+</main>
+<script src="../vendor/leaflet/leaflet.js"></script>
+<script type="module">
+  const L = window.L;
+  const servei = await (await fetch('../data/servei.json', { cache: 'no-cache' })).json();
+  const mapa = L.map('mapa');
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(mapa);
+  const linia = L.polyline([], { color: '#0D8F8C', weight: 3, dashArray: '6 6' }).addTo(mapa);
+  const escapa = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const arrodoneix = (x) => +x.toFixed(7);
+
+  function pintaLinia() {
+    linia.setLatLngs(servei.parades.map((p) => [p.lat, p.lon]));
+  }
+
+  // Avisa si els minuts no van en ordre creixent al llarg del recorregut.
+  function comprova() {
+    const mal = servei.parades.filter((p, i) => i > 0 && p.minuts_des_de_eixida < servei.parades[i - 1].minuts_des_de_eixida);
+    const avis = document.getElementById('avis');
+    avis.hidden = !mal.length;
+    avis.textContent = mal.length ? 'Els minuts han de créixer al llarg del recorregut. Revisa les parades: ' + mal.map((p) => p.num).join(', ') + '.' : '';
+    return !mal.length;
+  }
+
+  document.getElementById('files').innerHTML = servei.parades.map((p, i) => '<tr>' +
+    '<td>' + p.num + '</td>' +
+    '<td>' + escapa(p.nom.va) + '</td>' +
+    '<td class="coord" id="coord-' + i + '">' + p.lat + ', ' + p.lon + '</td>' +
+    '<td><input type="number" min="0" step="1" data-i="' + i + '" data-camp="minuts" value="' + p.minuts_des_de_eixida + '" aria-label="Minuts des de l\'eixida, parada ' + p.num + '"></td>' +
+    '<td><input type="checkbox" data-i="' + i + '" data-camp="estimat"' + (p.estimat ? ' checked' : '') + ' aria-label="Temps estimat, parada ' + p.num + '"></td>' +
+    '</tr>').join('');
+
+  document.getElementById('files').addEventListener('input', (e) => {
+    const p = servei.parades[+e.target.dataset.i];
+    if (e.target.dataset.camp === 'minuts') p.minuts_des_de_eixida = Math.max(0, Math.round(+e.target.value || 0));
+    if (e.target.dataset.camp === 'estimat') p.estimat = e.target.checked;
+    comprova();
+  });
+
+  servei.parades.forEach((p, i) => {
+    const icona = L.divIcon({ className: '', html: '<span class="num">' + p.num + '</span>', iconSize: [32, 32] });
+    const marcador = L.marker([p.lat, p.lon], { icon: icona, draggable: true, title: p.num + ' · ' + p.nom.va }).addTo(mapa);
+    marcador.on('dragend', () => {
+      const ll = marcador.getLatLng();
+      p.lat = arrodoneix(ll.lat);
+      p.lon = arrodoneix(ll.lng);
+      document.getElementById('coord-' + i).textContent = p.lat + ', ' + p.lon;
+      pintaLinia();
+    });
+  });
+  pintaLinia();
+  mapa.fitBounds(linia.getBounds(), { padding: [24, 24] });
+
+  document.getElementById('exporta').addEventListener('click', () => {
+    if (!comprova()) return;
+    const blob = new Blob([JSON.stringify(servei, null, 2) + '\n'], { type: 'application/json' });
+    const enllac = document.createElement('a');
+    enllac.href = URL.createObjectURL(blob);
+    enllac.download = 'servei.json';
+    enllac.click();
+    URL.revokeObjectURL(enllac.href);
+  });
+</script>
+</body>
+</html>

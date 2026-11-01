@@ -1,0 +1,213 @@
+@font-face {
+  font-family: 'Lexend';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/lexend-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Archivo Black';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/archivo-black-latin-400-normal.woff2') format('woff2');
+}
+
+/* Estil de juliol. --coral-fosc i --vora són variants per a complir el contrast AA. */
+:root {
+  --ink: #14324E;
+  --mar: #0F5FA8;
+  --teal: #0D8F8C;
+  --sand: #F7F0E1;
+  --coral: #D9481F;
+  --coral-fosc: #B23B16;
+  --coral-clar: #FBE4DB;
+  --vora: #8A7A5C;
+  --blanc: #fff;
+  --xifres: 'Archivo Black', 'Arial Black', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--sand);
+  color: var(--ink);
+  font: 1rem/1.5 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  overflow-wrap: break-word;
+}
+
+a { color: var(--mar); text-underline-offset: 2px; }
+h1 { font: 1.5rem/1.2 var(--xifres); margin: .875rem 0 .375rem; }
+h2 { font-size: 1.125rem; margin: 1.25rem 0 .5rem; }
+p { margin: .5rem 0; }
+
+:focus { outline: 3px solid var(--coral); outline-offset: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
+
+.vh {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+.pagina { max-width: 46rem; margin: 0 auto; padding: 0 1rem; }
+
+.salta {
+  position: absolute; left: .5rem; top: -5rem; z-index: 1000;
+  padding: .75rem 1rem; border-radius: 8px;
+  background: var(--blanc); color: var(--mar);
+}
+.salta:focus { top: .5rem; }
+
+/* Capçalera i idiomes */
+.capcalera { background: var(--ink); color: var(--sand); }
+.capcalera-dins {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .5rem; padding-top: .5rem; padding-bottom: .5rem;
+}
+.marca { margin: 0; font: 1rem/1.2 var(--xifres); }
+.marca-lloc { font-family: 'Lexend', sans-serif; }
+@media (max-width: 26rem) { .marca-lloc { display: none; } }
+.idiomes { display: flex; gap: .375rem; }
+.idiomes button {
+  min-width: 44px; min-height: 44px; padding: 0 .5rem;
+  border: 2px solid var(--sand); border-radius: 8px;
+  background: transparent; color: var(--sand);
+  font: inherit; cursor: pointer;
+}
+.idiomes button[aria-pressed="true"] { background: var(--sand); color: var(--ink); }
+
+/* Bàner fix del servei temporal */
+.banner { background: var(--coral-clar); border-bottom: 4px solid var(--coral); padding: .125rem 0; font-size: .9375rem; line-height: 1.4; }
+.banner p { margin: .375rem 0; }
+
+/* Avisos */
+.avis {
+  background: var(--coral-clar); border-left: 6px solid var(--coral-fosc);
+  border-radius: 8px; padding: .5rem .75rem; margin: .75rem 0;
+}
+.avis-oficial { background: var(--blanc); border-left: 6px solid var(--mar); border-radius: 8px; padding: .375rem .75rem; margin: .625rem 0; font-size: .9375rem; line-height: 1.4; }
+.nova-versio { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
+.nota { font-size: .9375rem; }
+.destacat { font-weight: 700; }
+
+/* Navegació */
+.navegacio ul {
+  list-style: none; margin: .75rem 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .375rem;
+}
+@media (max-width: 20rem) { .navegacio ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 40rem) { .navegacio ul { grid-template-columns: repeat(6, auto); justify-content: start; } }
+.navegacio a {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; height: 100%;
+  padding: .25rem .5rem; border: 2px solid var(--mar); border-radius: 12px;
+  background: var(--blanc); color: var(--mar); text-decoration: none; text-align: center; font-size: .9375rem; line-height: 1.25;
+}
+.navegacio a[aria-current="page"] { background: var(--mar); color: var(--blanc); }
+
+main { padding-bottom: 2rem; }
+main:focus { outline: none; }
+
+/* Botons i camps */
+.boto {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  min-height: 48px; padding: .5rem 1rem;
+  border: 2px solid var(--mar); border-radius: 12px;
+  background: var(--blanc); color: var(--mar);
+  font: inherit; cursor: pointer;
+}
+.boto-principal { width: 100%; background: var(--mar); color: var(--blanc); font-size: 1.0625rem; }
+label { display: block; margin: 1rem 0 .25rem; font-weight: 700; }
+input[type="search"], select {
+  display: block; width: 100%; min-height: 48px; padding: .5rem .75rem;
+  border: 2px solid var(--vora); border-radius: 10px;
+  background: var(--blanc); color: var(--ink); font: inherit;
+}
+
+/* Targeta del pròxim bus */
+.targeta {
+  background: var(--blanc); border: 1px solid var(--vora); border-radius: 16px;
+  padding: 1rem 1.25rem; margin: .75rem 0 1rem;
+}
+.proper-parada { margin: 0; font-weight: 700; }
+.proper-falten { margin: .75rem 0 0; font-size: .9375rem; letter-spacing: .06em; text-transform: uppercase; }
+.proper-compte { margin: 0; font: clamp(3rem, 16vw, 5.5rem)/1.05 var(--xifres); }
+.proper-hora { margin: .25rem 0 .5rem; font: clamp(1.5rem, 7vw, 2.25rem)/1.15 var(--xifres); color: var(--mar); }
+.proper-seguents ul { list-style: none; display: inline-flex; flex-wrap: wrap; gap: .25rem .75rem; margin: 0; padding: 0; }
+.proper-seguents li { font-weight: 700; }
+
+/* Llistes de parades */
+.llista-parades { list-style: none; margin: .5rem 0; padding: 0; }
+.llista-parades li + li { margin-top: .375rem; }
+.parada {
+  display: flex; align-items: flex-start; gap: .75rem;
+  width: 100%; min-height: 48px; padding: .5rem .75rem;
+  border: 2px solid var(--vora); border-radius: 12px;
+  background: var(--blanc); color: var(--ink);
+  font: inherit; text-align: left; cursor: pointer;
+}
+.parada[aria-current="true"] { border-color: var(--coral-fosc); box-shadow: inset 0 0 0 2px var(--coral-fosc); }
+.parada .num {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2rem; height: 2rem; border-radius: 1rem;
+  background: var(--mar); color: var(--blanc); font: .875rem/1 var(--xifres);
+}
+.parada .detall { display: block; font-size: .875rem; }
+.triador { margin: 1rem 0; }
+.triador summary {
+  display: flex; align-items: center; min-height: 48px; padding: .5rem .75rem;
+  border: 2px solid var(--mar); border-radius: 12px; background: var(--blanc); color: var(--mar);
+  cursor: pointer;
+}
+
+/* On vols anar? */
+.anar-pas { font-weight: 700; }
+
+/* Horari */
+.taules { display: grid; gap: 1rem; margin-top: 1rem; }
+@media (min-width: 40rem) { .taules { grid-template-columns: 1fr 1fr; align-items: start; } }
+table.horari { width: 100%; border-collapse: collapse; background: var(--blanc); border: 1px solid var(--vora); }
+.horari caption { text-align: left; font-weight: 700; padding: .25rem 0 .5rem; }
+.horari th, .horari td { padding: .5rem .75rem; text-align: left; border-bottom: 1px solid #e6dcc6; }
+.horari tr.proxima td { background: #FFE9A8; font-weight: 700; }
+.etiqueta {
+  display: inline-block; padding: 0 .5rem; border-radius: 999px;
+  background: var(--coral-fosc); color: var(--blanc); font-size: .8125rem; font-weight: 400;
+}
+
+/* Mapa */
+.mapa { height: 65vh; min-height: 20rem; border: 1px solid var(--vora); border-radius: 12px; background: #dfe8ee; }
+.mapa .leaflet-control-attribution a { color: var(--mar); }
+.marcador span {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; border: 3px solid var(--blanc); border-radius: 22px;
+  background: var(--mar); color: var(--blanc); font: .8125rem/1 var(--xifres);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+}
+.marcador.sel span { background: var(--coral-fosc); }
+.leaflet-popup-content { font: .9375rem/1.4 'Lexend', sans-serif; }
+
+/* Diagrama de la línia */
+.diagrama { list-style: none; margin: 1rem 0; padding: 0; }
+.linia-fila { display: flex; align-items: stretch; min-height: 3.5rem; }
+.linia-tras { position: relative; flex: 0 0 3rem; }
+.linia-tras svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; }
+.linia-tras line { stroke: var(--teal); stroke-width: 6; }
+.linia-tras circle { fill: var(--blanc); stroke: var(--teal); stroke-width: 4; }
+.linia-tras text { fill: var(--ink); font: 14px var(--xifres); }
+.linia-fila.sel circle { fill: var(--coral-fosc); stroke: var(--coral-fosc); }
+.linia-fila.sel text { fill: var(--blanc); }
+.linia-text { align-self: center; padding: .25rem 0 .25rem .5rem; }
+.linia-text .parada { display: inline; width: auto; min-height: 44px; padding: .5rem .25rem; border: 0; background: none; text-decoration: underline; color: var(--mar); }
+.linia-text .parada[aria-current="true"] { box-shadow: none; font-weight: 700; }
+.linia-min, .linia-nota { display: block; font-size: .875rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

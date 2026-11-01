@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ca-ES-valencia">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bus poble ⇄ platja · Oliva</title>
+<meta name="description" content="Horari del servei especial i temporal d'autobús entre el poble i la platja d'Oliva. App no oficial.">
+<meta name="theme-color" content="#14324E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bus Oliva">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/app.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<a class="salta" href="#contingut" data-i18n="app.salta"></a>
+<header class="capcalera">
+  <div class="pagina capcalera-dins">
+    <p class="marca"><span data-i18n="app.titol"></span> <span class="marca-lloc">Oliva</span></p>
+    <div class="idiomes" role="group" data-i18n-aria="app.idioma">
+      <button type="button" data-idioma="va" lang="ca-ES-valencia">VA<span class="vh"> Valencià</span></button>
+      <button type="button" data-idioma="es" lang="es">ES<span class="vh"> Castellano</span></button>
+      <button type="button" data-idioma="en" lang="en">EN<span class="vh"> English</span></button>
+    </div>
+  </div>
+</header>
+<div class="banner">
+  <div class="pagina">
+    <p><strong data-i18n="banner.temporal"></strong> <span id="banner-gratuit" data-i18n="banner.gratuit"></span></p>
+    <p class="banner-font"><span id="banner-comprovat"></span> <a id="banner-font" rel="noopener" data-i18n="banner.font"></a></p>
+  </div>
+</div>
+<div class="pagina">
+  <div id="avisos"></div>
+  <p id="estat-xarxa" class="avis" role="status" hidden></p>
+  <div id="nova-versio" class="avis nova-versio" hidden>
+    <p data-i18n="pwa.nova"></p>
+    <button type="button" id="boto-actualitza" class="boto" data-i18n="pwa.actualitza"></button>
+  </div>
+  <nav class="navegacio" data-i18n-aria="nav.etiqueta">
+    <ul>
+      <li><a href="#proper" data-vista="proper" data-i18n="nav.proper"></a></li>
+      <li><a href="#anar" data-vista="anar" data-i18n="nav.anar"></a></li>
+      <li><a href="#horari" data-vista="horari" data-i18n="nav.horari"></a></li>
+      <li><a href="#mapa" data-vista="mapa" data-i18n="nav.mapa"></a></li>
+      <li><a href="#linia" data-vista="linia" data-i18n="nav.linia"></a></li>
+      <li><a href="#sobre" data-vista="sobre" data-i18n="nav.sobre"></a></li>
+    </ul>
+  </nav>
+  <main id="contingut" tabindex="-1">
+    <p id="error-dades" class="avis" role="alert" hidden data-i18n="error.dades"></p>
+
+    <section id="vista-proper" class="vista" aria-labelledby="t-proper" hidden>
+      <h1 id="t-proper" tabindex="-1" data-i18n="proper.titol"></h1>
+      <div id="proper" class="targeta" tabindex="-1">
+        <p id="proper-parada" class="proper-parada"></p>
+        <p id="proper-falten" class="proper-falten"></p>
+        <p id="proper-compte" class="proper-compte"></p>
+        <p id="proper-hora" class="proper-hora"></p>
+        <p id="proper-avis" class="avis" hidden></p>
+        <p id="ubic-apeu" hidden></p>
+        <div id="proper-seguents" class="proper-seguents"></div>
+        <p id="proper-estimat" class="nota" hidden data-i18n="proper.estimat"></p>
+        <p class="nota" data-i18n="proper.noTempsReal"></p>
+      </div>
+      <button type="button" id="boto-ubicacio" class="boto boto-principal">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+        <span data-i18n="ubic.boto"></span>
+      </button>
+      <p class="nota" data-i18n="ubic.privacitat"></p>
+      <p id="ubic-estat" role="status"></p>
+      <div id="ubic-properes" hidden>
+        <h2 data-i18n="ubic.properes"></h2>
+        <ul id="llista-properes" class="llista-parades"></ul>
+      </div>
+      <details id="triador" class="triador">
+        <summary data-i18n="tria.canvia"></summary>
+        <label for="cerca" data-i18n="tria.cerca"></label>
+        <input type="search" id="cerca" autocomplete="off" spellcheck="false">
+        <ul id="llista-parades" class="llista-parades"></ul>
+        <p id="cerca-cap" hidden data-i18n="tria.cap"></p>
+      </details>
+    </section>
+
+    <section id="vista-anar" class="vista" aria-labelledby="t-anar" hidden>
+      <h1 id="t-anar" tabindex="-1" data-i18n="anar.titol"></h1>
+      <label for="anar-origen" data-i18n="anar.origen"></label>
+      <select id="anar-origen"></select>
+      <label for="anar-desti" data-i18n="anar.desti"></label>
+      <select id="anar-desti"></select>
+      <div id="anar-resultat" class="targeta" aria-live="polite" hidden></div>
+      <p class="nota" data-i18n="anar.nota"></p>
+    </section>
+
+    <section id="vista-horari" class="vista" aria-labelledby="t-horari" hidden>
+      <h1 id="t-horari" tabindex="-1" data-i18n="horari.titol"></h1>
+      <p id="horari-vigent"></p>
+      <p id="horari-eixides"></p>
+      <p id="horari-hui" class="destacat"></p>
+      <label for="horari-parada" data-i18n="horari.parada"></label>
+      <select id="horari-parada"></select>
+      <div id="horari-taules" class="taules"></div>
+    </section>
+
+    <section id="vista-mapa" class="vista" aria-labelledby="t-mapa" hidden>
+      <h1 id="t-mapa" tabindex="-1" data-i18n="mapa.titol"></h1>
+      <p id="mapa-avis" class="avis" hidden data-i18n="mapa.sensexarxa"></p>
+      <p id="mapa-rectes" class="nota" hidden data-i18n="mapa.rectes"></p>
+      <div id="mapa" class="mapa" role="region" data-i18n-aria="mapa.etiqueta"></div>
+      <p class="nota" data-i18n="mapa.ajuda"></p>
+    </section>
+
+    <section id="vista-linia" class="vista" aria-labelledby="t-linia" hidden>
+      <h1 id="t-linia" tabindex="-1" data-i18n="linia.titol"></h1>
+      <p data-i18n="linia.intro"></p>
+      <ol id="diagrama" class="diagrama"></ol>
+    </section>
+
+    <section id="vista-sobre" class="vista" aria-labelledby="t-sobre" hidden>
+      <h1 id="t-sobre" tabindex="-1" data-i18n="sobre.titol"></h1>
+      <p data-i18n="sobre.noOficial"></p>
+      <h2 data-i18n="sobre.fontTitol"></h2>
+      <p><span id="sobre-font"></span> <a id="sobre-enllac" rel="noopener"></a></p>
+      <p data-i18n="sobre.estimades"></p>
+      <p id="sobre-festius"></p>
+      <h2 data-i18n="sobre.privTitol"></h2>
+      <ul>
+        <li data-i18n="sobre.priv1"></li>
+        <li data-i18n="sobre.priv2"></li>
+        <li data-i18n="sobre.priv3"></li>
+      </ul>
+      <h2 data-i18n="sobre.iosTitol"></h2>
+      <ol>
+        <li data-i18n="sobre.ios1"></li>
+        <li data-i18n="sobre.ios2"></li>
+        <li data-i18n="sobre.ios3"></li>
+      </ol>
+      <h2 data-i18n="sobre.creditsTitol"></h2>
+      <ul>
+        <li><a href="https://www.openstreetmap.org/copyright" rel="noopener" data-i18n="sobre.osm"></a></li>
+        <li><a href="https://leafletjs.com/" rel="noopener" data-i18n="sobre.leaflet"></a></li>
+        <li data-i18n="sobre.fonts"></li>
+      </ul>
+    </section>
+  </main>
+</div>
+<div id="anunci" class="vh" aria-live="polite"></div>
+<noscript><p class="pagina">Cal JavaScript · Hace falta JavaScript · JavaScript is required</p></noscript>
+</body>
+</html>

@@ -1,0 +1,318 @@
+{
+  "comprovat": "2026-10-31",
+  "pendent": "Falten els festius locals d'Oliva de 2026 i 2027 (ambit \"local\"): afegiu-los quan es confirmen en el DOGV o en la web de l'Ajuntament.",
+  "festius": [
+    {
+      "data": "2026-01-01",
+      "nom": {
+        "va": "Cap d'Any",
+        "es": "Año Nuevo",
+        "en": "New Year's Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-01-06",
+      "nom": {
+        "va": "Reis (Epifania del Senyor)",
+        "es": "Epifanía del Señor",
+        "en": "Epiphany"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-03-19",
+      "nom": {
+        "va": "Sant Josep",
+        "es": "San José",
+        "en": "Saint Joseph's Day"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 100/2025, del Consell (DOGV núm. 10145, 07-07-2025)",
+        "url": "https://dogv.gva.es/datos/2025/07/07/pdf/2025_24690_va.pdf"
+      }
+    },
+    {
+      "data": "2026-04-03",
+      "nom": {
+        "va": "Divendres Sant",
+        "es": "Viernes Santo",
+        "en": "Good Friday"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-04-06",
+      "nom": {
+        "va": "Dilluns de Pasqua",
+        "es": "Lunes de Pascua",
+        "en": "Easter Monday"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 100/2025, del Consell (DOGV núm. 10145, 07-07-2025)",
+        "url": "https://dogv.gva.es/datos/2025/07/07/pdf/2025_24690_va.pdf"
+      }
+    },
+    {
+      "data": "2026-05-01",
+      "nom": {
+        "va": "Festa del Treball",
+        "es": "Fiesta del Trabajo",
+        "en": "Labour Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-06-24",
+      "nom": {
+        "va": "Sant Joan",
+        "es": "San Juan",
+        "en": "Saint John's Day"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 100/2025, del Consell (DOGV núm. 10145, 07-07-2025)",
+        "url": "https://dogv.gva.es/datos/2025/07/07/pdf/2025_24690_va.pdf"
+      }
+    },
+    {
+      "data": "2026-08-15",
+      "nom": {
+        "va": "Assumpció de la Mare de Déu",
+        "es": "Asunción de la Virgen",
+        "en": "Assumption Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-10-09",
+      "nom": {
+        "va": "Dia de la Comunitat Valenciana",
+        "es": "Día de la Comunitat Valenciana",
+        "en": "Valencian Community Day"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 100/2025, del Consell (DOGV núm. 10145, 07-07-2025)",
+        "url": "https://dogv.gva.es/datos/2025/07/07/pdf/2025_24690_va.pdf"
+      }
+    },
+    {
+      "data": "2026-10-12",
+      "nom": {
+        "va": "Festa Nacional d'Espanya",
+        "es": "Fiesta Nacional de España",
+        "en": "National Day of Spain"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-12-08",
+      "nom": {
+        "va": "Immaculada Concepció",
+        "es": "Inmaculada Concepción",
+        "en": "Immaculate Conception"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-12-25",
+      "nom": {
+        "va": "Nadal",
+        "es": "Navidad",
+        "en": "Christmas Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2027-01-01",
+      "nom": {
+        "va": "Cap d'Any",
+        "es": "Año Nuevo",
+        "en": "New Year's Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-01-06",
+      "nom": {
+        "va": "Reis (Epifania del Senyor)",
+        "es": "Epifanía del Señor",
+        "en": "Epiphany"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-03-19",
+      "nom": {
+        "va": "Sant Josep",
+        "es": "San José",
+        "en": "Saint Joseph's Day"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 42/2026, del Consell (DOGV núm. 10329, 25-03-2026)",
+        "url": "https://comunica.gva.es/va/detalle?id=403512353&site=373431293"
+      }
+    },
+    {
+      "data": "2027-03-26",
+      "nom": {
+        "va": "Divendres Sant",
+        "es": "Viernes Santo",
+        "en": "Good Friday"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-03-29",
+      "nom": {
+        "va": "Dilluns de Pasqua",
+        "es": "Lunes de Pascua",
+        "en": "Easter Monday"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 42/2026, del Consell (DOGV núm. 10329, 25-03-2026)",
+        "url": "https://comunica.gva.es/va/detalle?id=403512353&site=373431293"
+      }
+    },
+    {
+      "data": "2027-05-01",
+      "nom": {
+        "va": "Festa del Treball",
+        "es": "Fiesta del Trabajo",
+        "en": "Labour Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-10-09",
+      "nom": {
+        "va": "Dia de la Comunitat Valenciana",
+        "es": "Día de la Comunitat Valenciana",
+        "en": "Valencian Community Day"
+      },
+      "ambit": "autonomic",
+      "font": {
+        "nom": "Decret 42/2026, del Consell (DOGV núm. 10329, 25-03-2026)",
+        "url": "https://comunica.gva.es/va/detalle?id=403512353&site=373431293"
+      }
+    },
+    {
+      "data": "2027-10-12",
+      "nom": {
+        "va": "Festa Nacional d'Espanya",
+        "es": "Fiesta Nacional de España",
+        "en": "National Day of Spain"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-11-01",
+      "nom": {
+        "va": "Tots Sants",
+        "es": "Todos los Santos",
+        "en": "All Saints' Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-12-06",
+      "nom": {
+        "va": "Dia de la Constitució",
+        "es": "Día de la Constitución",
+        "en": "Constitution Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-12-08",
+      "nom": {
+        "va": "Immaculada Concepció",
+        "es": "Inmaculada Concepción",
+        "en": "Immaculate Conception"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    },
+    {
+      "data": "2027-12-25",
+      "nom": {
+        "va": "Nadal",
+        "es": "Navidad",
+        "en": "Christmas Day"
+      },
+      "ambit": "nacional",
+      "font": {
+        "nom": "BOE-A-2026-21254 (BOE núm. 254, 13-10-2026)",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-21254"
+      }
+    }
+  ]
+}
