@@ -79,16 +79,26 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
 .marca { margin: 0; font: 1rem/1.2 var(--xifres); }
 .marca-lloc { font-family: 'Lexend', sans-serif; }
 @media (max-width: 26rem) { .marca-lloc { display: none; } }
-.idiomes { display: flex; gap: .375rem; }
-.idiomes button {
-  min-width: 44px; min-height: 44px; padding: 0 .5rem;
-  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  border: 2px solid var(--cap-text); border-radius: 8px;
-  background: transparent; color: var(--cap-text); font-size: .75rem; line-height: 1;
-  font: inherit; cursor: pointer;
+.idiomes { position: relative; }
+.idioma-boto {
+  display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .75rem;
+  border: 2px solid var(--cap-text); border-radius: 12px;
+  background: transparent; color: var(--cap-text); font: inherit; font-weight: 700; cursor: pointer;
 }
-.idiomes button[aria-pressed="true"] { background: var(--cap-text); color: var(--cap-fons); }
-.idiomes svg { display: block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(127, 127, 127, .6); }
+#idioma-actual { display: inline-flex; align-items: center; gap: .5rem; }
+.idioma-menu {
+  position: absolute; right: 0; top: calc(100% + .375rem); z-index: 1100;
+  min-width: 12rem; margin: 0; padding: .375rem; list-style: none;
+  background: var(--cap-fons); border: 1px solid var(--vora); border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+.idioma-menu button {
+  display: flex; align-items: center; gap: .75rem; width: 100%; min-height: 44px; padding: .375rem .75rem;
+  border: 0; border-radius: 8px; background: transparent; color: var(--cap-text);
+  font: inherit; font-weight: 700; text-align: left; cursor: pointer;
+}
+.idioma-menu button[aria-current="true"], .idioma-menu button:hover { background: rgba(127, 127, 127, .3); }
+.bandera { flex: 0 0 auto; display: block; border-radius: 3px; box-shadow: 0 0 0 1px rgba(127, 127, 127, .6); }
 
 /* Bàner fix del servei temporal */
 .banner { background: var(--coral-clar); border-bottom: 4px solid var(--coral); padding: .125rem 0; font-size: .9375rem; line-height: 1.4; }

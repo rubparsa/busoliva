@@ -23,7 +23,7 @@ export function pintaDiagrama(llista, ctx) {
     return '<li class="linia-fila' + (sel ? ' sel' : '') + '">' +
       '<span class="linia-tras" aria-hidden="true">' + svg + '</span>' +
       '<span class="linia-text">' + nom +
-      (primer ? '' : '<span class="linia-min">' + ctx.escapa(ctx.t('linia.minuts', { min: p.minuts_des_de_eixida })) + '</span>') +
+      (primer || p.minuts_des_de_eixida == null ? '' : '<span class="linia-min">' + ctx.escapa(ctx.t('linia.minuts', { min: p.minuts_des_de_eixida })) + '</span>') +
       (nota ? '<span class="linia-nota">' + ctx.escapa(nota) + '</span>' : '') +
       '</span></li>';
   }).join('');

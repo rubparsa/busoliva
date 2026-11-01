@@ -1,6 +1,6 @@
 // Cartells A4 per a imprimir: un per parada, amb l'horari de servei.json i el codi QR
 // generat en local (qr/parada-N.svg, amb npm run qr).
-import { IDIOMES, estableixIdioma, idioma, idiomaInicial, t } from './i18n.js';
+import { IDIOMES, estableixIdioma, idioma, idiomaInicial, iniciaSelectorIdioma, marcaIdioma, durada, t } from './i18n.js';
 import { sumaMinuts } from './servei.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -22,7 +22,7 @@ function sentit(p) {
 }
 
 function taula(tipus, p) {
-  const ambPas = p !== servei.parades[0];
+  const ambPas = p !== servei.parades[0] && p.minuts_des_de_eixida != null;
   const files = servei.eixides[tipus].map((h) => '<tr><td>' + horaText(h) + '</td>' +
     (ambPas ? '<td>' + horaText(sumaMinuts(h, p.minuts_des_de_eixida)) + ' ' + escapa(t('hora.aprox')) + '</td>' : '') + '</tr>').join('');
   return '<table class="horari"><caption>' + escapa(t(tipus === 'laborables' ? 'horari.laborables' : 'horari.festius')) +
@@ -42,7 +42,7 @@ function cartell(p) {
     '<h2 class="cartell-parada" id="cartell-' + p.num + '"><span class="cartell-num" aria-hidden="true">' + p.num + '</span>' +
     '<span><span class="vh">' + escapa(t('proper.parada', { num: p.num })) + ' · </span>' + escapa(nom(p)) + '</span></h2>' +
     (s ? '<p><strong>' + escapa(s) + '</strong></p>' : '') +
-    '<p>' + escapa(t('horari.eixides', { nom: nom(servei.parades[0]) })) + ' ' + escapa(vigencia) + '</p>' +
+    '<p>' + escapa(t('horari.eixides', { nom: nom(servei.parades[0]) })) + ' ' + escapa(t('horari.durada', { durada: durada(servei.durada_volta_minuts) })) + ' ' + escapa(vigencia) + '</p>' +
     '<div class="cartell-taules">' + taula('laborables', p) + taula('caps_de_setmana_i_festius', p) + '</div>' +
     '<div class="cartell-qr"><img src="qr/parada-' + p.num + '.svg" width="160" height="160" alt="' + escapa(t('cartells.qrAlt', { url })) + '">' +
     '<div><p><strong>' + escapa(t('cartells.qr')) + '</strong></p><p class="cartell-url">' + escapa(url) + '</p></div></div>' +
@@ -55,7 +55,7 @@ function pinta() {
   document.title = t('cartells.titol') + ' · ' + t('doc.titol');
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.getAttribute('data-i18n')); });
   document.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
-  document.querySelectorAll('[data-idioma]').forEach((b) => { b.setAttribute('aria-pressed', String(b.getAttribute('data-idioma') === idioma())); });
+  marcaIdioma();
   if (!servei) return;
   const sel = $('#cartell-parada');
   const valor = sel.value;
@@ -76,10 +76,8 @@ try {
 } catch (e) { /* sense emmagatzematge */ }
 estableixIdioma(idiomaInicial());
 pinta();
-document.addEventListener('click', (e) => {
-  const boto = e.target.closest ? e.target.closest('[data-idioma]') : null;
-  if (!boto) return;
-  estableixIdioma(boto.getAttribute('data-idioma'));
+iniciaSelectorIdioma((nou) => {
+  estableixIdioma(nou);
   try { localStorage.setItem('busoliva.idioma', idioma()); } catch (er) { /* sense emmagatzematge */ }
   pinta();
 });

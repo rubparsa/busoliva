@@ -212,18 +212,25 @@ test('7. De la parada 9 a la parada 1 → arribada aproximada segons els minuts 
   await page.selectOption('#anar-origen', origen.punt);
   await page.selectOption('#anar-desti', desti.punt);
   await page.waitForSelector('#anar-arribada');
-  const r = await page.evaluate(() => ({
-    puja: { ...document.querySelector('#anar-puja').dataset },
-    arribada: { ...document.querySelector('#anar-arribada').dataset },
-    text: document.querySelector('#anar-arribada').textContent,
-  }));
+  const r = await page.evaluate(() => {
+    const dades = (id) => (document.querySelector(id) ? { ...document.querySelector(id).dataset } : null);
+    return { puja: dades('#anar-puja'), arribada: dades('#anar-arribada'), eixida: dades('#anar-eixida'), text: document.querySelector('#anar-arribada').textContent };
+  });
   // Com que és un circuit, la parada 1 com a destí és la del final del recorregut.
   const i = servei.parades.indexOf(origen);
   const final = servei.parades.find((p, j) => j > i && p.punt === desti.punt);
-  const eixida = servei.eixides.laborables.find((h) => minuts(h) + origen.minuts_des_de_eixida >= minuts('08:00'));
-  assert.deepEqual(r.puja, { num: '9', hora: hhmm(minuts(eixida) + origen.minuts_des_de_eixida), data: '2026-11-02' });
-  assert.deepEqual(r.arribada, { num: String(final.num), hora: hhmm(minuts(eixida) + final.minuts_des_de_eixida), data: '2026-11-02' });
-  assert.match(r.text, /aprox\.$/);
+  assert.equal(r.puja.num, '9');
+  assert.equal(r.arribada.num, String(final.num));
+  if (origen.minuts_des_de_eixida != null && final.minuts_des_de_eixida != null) {
+    const eixida = servei.eixides.laborables.find((h) => minuts(h) + origen.minuts_des_de_eixida >= minuts('08:00'));
+    assert.deepEqual(r.puja, { num: '9', hora: hhmm(minuts(eixida) + origen.minuts_des_de_eixida), data: '2026-11-02' });
+    assert.deepEqual(r.arribada, { num: String(final.num), hora: hhmm(minuts(eixida) + final.minuts_des_de_eixida), data: '2026-11-02' });
+    assert.match(r.text, /aprox\.$/);
+  } else {
+    // Sense hores de pas conegudes, no s'inventa l'arribada: es dona la pròxima eixida de la parada 1.
+    assert.equal(r.arribada.hora, undefined);
+    assert.deepEqual(r.eixida, { hora: servei.eixides.laborables.find((h) => h >= '08:00'), data: '2026-11-02' });
+  }
   await context.close();
 });
 
@@ -271,7 +278,10 @@ test('9. Valencià → castellà → anglès sense claus sense traduir, i l\'idi
     };
   }, claus);
   for (const [boto, lang, nav] of [[null, 'ca-ES-valencia', 'Horari'], ['es', 'es', 'Horario'], ['en', 'en', 'Timetable']]) {
-    if (boto) await page.click(`button[data-idioma="${boto}"]`);
+    if (boto) {
+      await page.click('#idioma-boto');
+      await page.click(`#idioma-menu button[data-idioma="${boto}"]`);
+    }
     for (const vista of VISTES) {
       await vesA(page, vista);
       if (vista === 'anar') await page.selectOption('#anar-desti', parada(9).punt);
@@ -309,6 +319,9 @@ test('10. axe sense violacions serious/critical, sense desplaçament horitzontal
     await page.waitForSelector('#llista-properes li');
     await page.click('#boto-favorita');
     await page.waitForSelector('#llista-favorites li');
+    await page.click('#idioma-boto');
+    await revisa('menú d\'idioma obert');
+    await page.keyboard.press('Escape');
     await page.click('#triador summary');
     for (const vista of VISTES) {
       await vesA(page, vista);

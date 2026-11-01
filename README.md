@@ -2,7 +2,7 @@
 
 App web instal·lable (PWA) **no oficial** per a consultar el servei especial i temporal d'autobús entre el poble i la platja d'Oliva. L'Ajuntament el va posar en marxa el 22-10-2026 arran de la DANA. Font: [avís oficial «DANA - Servei especial d'autobús a Oliva entre el poble i la platja»](https://www.oliva.es/va/DANA).
 
-L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial, sempre en hora d'Oliva (Europe/Madrid), siga quina siga la zona horària del mòbil. Les hores de pas per les parades intermèdies són aproximades i sempre porten «aprox.».
+L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial, sempre en hora d'Oliva (Europe/Madrid), siga quina siga la zona horària del mòbil. L'avís oficial només dona les hores d'eixida de la parada 1 i diu que la volta dura aproximadament una hora: per a la resta de parades, l'app mostra l'hora d'eixida de la parada 1 i ho indica.
 
 ## Què fa
 
@@ -43,6 +43,7 @@ Totes les dades són en `data/`. La interfície no té cap hora ni cap parada es
 | `vigent_des_de` / `vigent_fins_a` | Període del servei (`"AAAA-MM-DD"`). `vigent_fins_a` és `null` mentre no hi haja data de fi. Si ja ha passat, l'app mostra «Servei finalitzat. Consulta oliva.es». |
 | `font.comprovat` | Data en què s'ha comprovat l'avís oficial. Es mostra en «Sobre l'app» i en els cartells. |
 | `font.url`, `font.titol`, `font.data_avis` | Enllaç i dades de l'avís oficial. |
+| `durada_volta_minuts` | Durada aproximada de la volta completa (l'avís diu «aproximadament una hora»). |
 | `gratuit` | `true` si el servei és gratuït. |
 
 ### Parades: `data/servei.json`, camp `parades`
@@ -55,13 +56,13 @@ Les parades van en l'ordre del recorregut: la primera és l'eixida i l'última, 
 | `punt` | Identificador del lloc. Les parades que són el mateix punt en sentits contraris el comparteixen (1/20, 5/14, 6/13, 7/12); així l'app tria el sentit correcte. |
 | `nom.va`, `nom.es` | Nom oficial en valencià i en castellà (en anglès es mostra el valencià). |
 | `lat`, `lon` | Coordenades de la parada (de la parada, no del número del carrer). |
-| `minuts_des_de_eixida` | Minuts des de l'eixida de la parada 1 fins al pas per esta parada. Han de créixer al llarg del recorregut. |
+| `minuts_des_de_eixida` | Minuts des de l'eixida de la parada 1 fins al pas per esta parada, o `null` si no se saben (ara totes, llevat de la 1). Si es posen, l'app mostra l'hora de pas amb «aprox.». Han de créixer al llarg del recorregut. |
 | `estimat` | `true` si els minuts són una estimació i no una dada oficial. |
 
 Per a corregir coordenades i minuts, useu l'**editor de parades**:
 
 1. `npm start` i obriu <http://localhost:8080/busoliva/eines/editor-parades.html>.
-2. Arrossegueu cada marcador fins a la parada real i corregiu els minuts i la casella «Estimat».
+2. Arrossegueu cada marcador fins a la parada real. Si sabeu els minuts de pas, poseu-los (i marqueu «Estimat» si no són oficials); si no, deixeu-los buits.
 3. Toqueu «Exporta servei.json» i substituïu `data/servei.json` pel fitxer baixat.
 4. Executeu `npm run recorregut` per a tornar a generar el traçat del mapa (`data/recorregut.geojson`). Amb connexió, es calcula per carrers amb OSRM; sense connexió, es desen línies rectes i el mapa ho avisa. L'app no crida mai OSRM mentre funciona.
 5. Si canvia la numeració de les parades, executeu `npm run qr` per a tornar a fer els codis QR dels cartells.
@@ -74,7 +75,7 @@ Serveix per a calcular en el mòbil la distància a peu pel carrer fins a cada p
 
 Cada festiu té `data`, `nom` (en `va`, `es` i `en`), `ambit` (`nacional`, `autonomic` o `local`) i `font` (`nom` i `url` del BOE, del DOGV o de l'Ajuntament). Els dies feiners que són festius usen l'horari de dissabtes, diumenges i festius.
 
-> Pendent: falten els festius locals d'Oliva de 2026 i 2027. Afegiu-los amb `"ambit": "local"` quan es publiquen en el DOGV o en la web de l'Ajuntament.
+> Pendent: falten els festius locals d'Oliva de 2027. Afegiu-los amb `"ambit": "local"` quan es publiquen en el DOGV o en la web de l'Ajuntament. Cal confirmar si el 7-12-2026 és festiu local o només dia de lliure disposició escolar.
 
 ### Avisos: `data/avisos.json`
 
@@ -125,10 +126,8 @@ Després de cada canvi, n'hi ha prou de tornar a pujar els fitxers a `main`. Rec
 ## Dades pendents de confirmar
 
 - **Coordenades** de les parades: són les candidates del servei d'estiu. Les de les parades 15 i 18 són provisionals.
-- **Minuts de pas**: estimats a partir de les marques de l'horari d'estiu (Pl. d'Europa +10, Comarca de la Marina 58 +15, Av. del Llaurador 30 +20), repartits segons la distància entre parades.
-- **Noms** de les parades 1–16 en valencià i 17–20 en castellà, pendents de contrastar amb l'avís oficial.
-- **Festius**: els nacionals i autonòmics s'han de contrastar amb el text del BOE i del DOGV. Falten els locals d'Oliva.
-- **Traçat del mapa**: línies rectes fins que s'execute `npm run recorregut` amb connexió.
+- **Hores de pas** per les parades intermèdies: l'avís no les dona.
+- **Festius**: els nacionals i autonòmics s'han de contrastar amb el text del BOE i del DOGV. Falten els locals de 2027 i confirmar el 7-12-2026.
 - **Xarxa de carrers**: buida fins que s'execute `npm run carrers` amb connexió.
 
 ## Privacitat

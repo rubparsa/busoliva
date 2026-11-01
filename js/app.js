@@ -1,4 +1,4 @@
-import { IDIOMES, DIES, estableixIdioma, idioma, idiomaInicial, t } from './i18n.js';
+import { IDIOMES, DIES, estableixIdioma, idioma, idiomaInicial, iniciaSelectorIdioma, marcaIdioma, durada, t } from './i18n.js';
 import * as S from './servei.js';
 import { pintaDiagrama } from './diagrama.js';
 
@@ -43,7 +43,10 @@ function quanDia(ms) {
   return DIES[idioma()][S.diaSetmana(dia)] + ' ' + +d[2] + (idioma() === 'en' ? '/' : '-') + +d[1];
 }
 const parades = () => estat.servei.parades;
-const aprox = (parada) => parada !== parades()[0];
+// «aprox.» només per a hores de pas conegudes per parades que no són l'eixida.
+const aprox = (parada) => parada !== parades()[0] && S.minutsConeguts(parada) != null;
+// Sense hores de pas per a la parada, es mostra l'hora d'eixida de la parada 1.
+const senseHoraPas = (parada) => parada !== parades()[0] && S.minutsConeguts(parada) == null;
 // «a les 7.30», «demà a les 9.00», «a les 7.43 aprox.»
 function quan(ms, parada, plantilla) {
   const dia = quanDia(ms);
@@ -115,7 +118,15 @@ function pintaProper(ara) {
   const el = $('#proper-parada');
   el.textContent = etiqueta(p);
   el.setAttribute('data-num', p.num);
-  $('#proper-estimat').hidden = !p.estimat;
+  const nota = $('#proper-estimat');
+  nota.hidden = !(p.estimat || senseHoraPas(p));
+  if (senseHoraPas(p)) {
+    const curs = S.enCurs(estat.servei, estat.festius, ara);
+    nota.textContent = t('proper.eixidaParada1', { nom: nom(parades()[0]), durada: durada(estat.servei.durada_volta_minuts) }) +
+      (curs ? ' ' + t('proper.enCurs', { hora: horaText(curs.hora) }) : '');
+  } else if (p.estimat) {
+    nota.textContent = t('proper.estimat');
+  }
   const avis = $('#proper-avis');
   const compteEl = $('#proper-compte');
   const horaEl = $('#proper-hora');
@@ -173,7 +184,10 @@ function pintaAPeu(p, primer, ara) {
   if (!estat.ubicacio) { el.hidden = true; return; }
   const d = estat.distancies.filter((x) => x.parada === p)[0];
   const min = S.minutsAPeu(d.metres);
-  if (primer.ms - ara >= min * 60000) {
+  if (senseHoraPas(p)) {
+    el.className = 'nota';
+    el.textContent = t('ubic.tardes', { min });
+  } else if (primer.ms - ara >= min * 60000) {
     el.className = 'nota';
     el.textContent = t('ubic.atemps', { min });
   } else {
@@ -339,6 +353,15 @@ function pintaAnar(ara) {
   if (!v) { res.innerHTML = '<p>' + escapa(t('proper.capBus')) + '</p>'; return; }
   const ps = parades();
   const lloc = (p) => { const s = sentit(p); return p.num + ' · ' + nom(p) + (s ? ', ' + s + ',' : ''); };
+  if (!v.ambHores) {
+    res.innerHTML =
+      '<p class="anar-pas" id="anar-puja" data-num="' + v.origen.num + '">' + escapa(t('anar.pujaSenseHora', { parada: lloc(v.origen) })) + '</p>' +
+      (v.volta ? '<p>' + escapa(t('anar.voltaSenseHora', { num: ps[ps.length - 1].num })) + '</p>' : '') +
+      '<p class="anar-pas" id="anar-arribada" data-num="' + v.desti.num + '">' + escapa(t('anar.baixaSenseHora', { parada: lloc(v.desti), n: v.parades })) + '</p>' +
+      (v.eixida ? '<p id="anar-eixida" data-hora="' + v.eixida.hora + '" data-data="' + v.eixida.data + '">' +
+        escapa(t('anar.eixida', { hora: quan(v.eixida.ms, ps[0]), durada: durada(estat.servei.durada_volta_minuts) })) + '</p>' : '');
+    return;
+  }
   const atributs = (ms, p) => ' data-num="' + p.num + '" data-hora="' + S.horaMadrid(ms) + '" data-data="' + S.diaMadrid(ms) + '"';
   res.innerHTML =
     '<p class="anar-pas" id="anar-puja"' + atributs(v.puja, v.origen) + '>' + escapa(t('anar.puja', { parada: lloc(v.origen), hora: quan(v.puja, v.origen) })) + '</p>' +
@@ -356,7 +379,7 @@ function taula(tipus, p, seguent, hui) {
     const dia = proxima ? quanDia(seguent.ms) : '';
     return '<tr' + (proxima ? ' class="proxima"' : '') + '><td>' + horaText(h) +
       (proxima ? ' <span class="etiqueta">' + escapa(t('horari.proxima') + (dia ? ', ' + dia : '')) + '</span>' : '') + '</td>' +
-      (ambPas ? '<td>' + horaText(S.sumaMinuts(h, p.minuts_des_de_eixida)) + ' ' + escapa(t('hora.aprox')) + '</td>' : '') + '</tr>';
+      (ambPas ? '<td>' + horaText(S.sumaMinuts(h, S.minutsConeguts(p))) + ' ' + escapa(t('hora.aprox')) + '</td>' : '') + '</tr>';
   }).join('');
   return '<table class="horari' + (hui ? ' hui' : '') + '" data-tipus="' + tipus + '"><caption>' + escapa(titol) +
     (hui ? ' <span class="etiqueta">' + escapa(t('dia.hui')) + '</span>' : '') + '</caption><thead><tr><th scope="col">' +
@@ -369,11 +392,15 @@ function pintaHorari(ara) {
   const valor = sel.value || String(paradaActual().num);
   sel.innerHTML = parades().map((p) => { const s = sentit(p); return '<option value="' + p.num + '">' + p.num + ' · ' + escapa(nom(p)) + (s ? ' · ' + escapa(s) : '') + '</option>'; }).join('');
   sel.value = valor;
-  const p = parada(+sel.value) || parades()[0];
+  // El selector de parada només té sentit si hi ha hores de pas conegudes.
+  const ambPasos = parades().some(aprox);
+  sel.hidden = !ambPasos;
+  $('label[for="horari-parada"]').hidden = !ambPasos;
+  const p = ambPasos ? parada(+sel.value) || parades()[0] : parades()[0];
   $('#horari-vigent').textContent = sv.vigent_fins_a
     ? t('horari.vigentFins', { data: data(sv.vigent_des_de), fi: data(sv.vigent_fins_a) })
     : t('horari.vigent', { data: data(sv.vigent_des_de) });
-  $('#horari-eixides').textContent = t('horari.eixides', { nom: nom(parades()[0]) });
+  $('#horari-eixides').textContent = t('horari.eixides', { nom: nom(parades()[0]) }) + ' ' + t('horari.durada', { durada: durada(sv.durada_volta_minuts) });
   const avui = S.diaMadrid(ara);
   const tipus = S.tipusDia(avui, estat.festius);
   const festiu = estat.festius.get(avui);
@@ -392,7 +419,10 @@ function pintaMapa() {
   import('./mapa.js').then((m) => m.mostra({
     servei: estat.servei, parada: estat.parada, ubicacio: estat.ubicacio,
     t, etiqueta, escapa,
-    proper: (p) => { const r = S.passades(estat.servei, estat.festius, p, Date.now(), 1)[0]; return r ? quanCurt(r.ms, p) : '–'; },
+    proper: (p) => {
+      const r = S.passades(estat.servei, estat.festius, p, Date.now(), 1)[0];
+      return t(senseHoraPas(p) ? 'mapa.properEixida' : 'mapa.proper', { hora: r ? quanCurt(r.ms, p) : '–' });
+    },
     tria: (num) => tria(num, false),
     senseTesseles: () => { avis.hidden = false; },
     rectes: (si) => { $('#mapa-rectes').hidden = !si; },
@@ -454,7 +484,7 @@ function aplicaTextos() {
   document.title = t('doc.titol');
   $$('[data-i18n]').forEach((el) => { el.textContent = t(el.getAttribute('data-i18n')); });
   $$('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
-  $$('[data-idioma]').forEach((b) => { b.setAttribute('aria-pressed', String(b.getAttribute('data-idioma') === idioma())); });
+  marcaIdioma();
 }
 
 function canviaIdioma(nou) {
@@ -516,8 +546,6 @@ function inicia() {
   document.addEventListener('click', (e) => {
     const boto = e.target.closest ? e.target.closest('button.parada') : null;
     if (boto) tria(+boto.getAttribute('data-num'), true);
-    const idiomaBoto = e.target.closest ? e.target.closest('[data-idioma]') : null;
-    if (idiomaBoto) canviaIdioma(idiomaBoto.getAttribute('data-idioma'));
     const modeBoto = e.target.closest ? e.target.closest('[data-mode]') : null;
     if (modeBoto) {
       const mode = modeBoto.getAttribute('data-mode');
@@ -527,6 +555,7 @@ function inicia() {
     }
   });
   if (sistemaFosc && sistemaFosc.addEventListener) sistemaFosc.addEventListener('change', aplicaModes);
+  iniciaSelectorIdioma(canviaIdioma);
   $('#boto-ubicacio').addEventListener('click', localitza);
   $('#boto-favorita').addEventListener('click', commutaFavorita);
   $('#boto-comparteix').addEventListener('click', comparteix);

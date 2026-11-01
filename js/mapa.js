@@ -38,7 +38,7 @@ function grups() {
 
 function contingut(grup) {
   return grup.map((p) => '<p><strong>' + ctx.escapa(ctx.etiqueta(p)) + '</strong><br>' +
-    ctx.escapa(ctx.t('mapa.proper', { hora: ctx.proper(p) })) + '</p>' +
+    ctx.escapa(ctx.proper(p)) + '</p>' +
     (grup.length > 1 ? '<p><button type="button" class="boto" data-tria="' + p.num + '">' + ctx.escapa(ctx.t('mapa.tria')) + '</button></p>' : '')
   ).join('') + '<p><a href="#proper">' + ctx.escapa(ctx.t('mapa.veure')) + '</a></p>';
 }

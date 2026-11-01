@@ -33,6 +33,8 @@ export const TEXTOS = {
     'proper.ara': 'Ara',
     'temps.min': '{m} min',
     'temps.hmin': '{h} h {m} min',
+    'temps.unaHora': 'una hora',
+    'temps.minuts': '{m} minuts',
     'hora.ales': 'a les {hora}',
     'hora.capales': 'cap a les {hora}',
     'hora.aprox': 'aprox.',
@@ -43,6 +45,15 @@ export const TEXTOS = {
     'proper.capMes': 'Hui ja no hi ha més busos: {quan}.',
     'proper.finalitzat': 'Servei finalitzat. Consulta oliva.es.',
     'proper.capBus': 'No hi ha cap bus previst en els pròxims dies.',
+    'proper.eixidaParada1': "És l'hora d'eixida de la parada 1, {nom}. La volta completa dura aproximadament {durada}: el bus passa per ací més tard.",
+    'proper.enCurs': "El bus que ha eixit a les {hora} encara està fent la volta i pot passar per ací.",
+    'ubic.tardes': 'Fins a la parada tardes uns {min} min a peu.',
+    'anar.pujaSenseHora': 'Puja a la parada {parada}.',
+    'anar.baixaSenseHora': 'Baixa a la parada {parada} ({n} parades després).',
+    'anar.voltaSenseHora': 'El bus passa pel final del recorregut (parada {num}) i continua en la volta següent.',
+    'anar.eixida': 'Pròxima eixida de la parada 1: {hora}. La volta completa dura aproximadament {durada}.',
+    'horari.durada': 'La volta completa dura aproximadament {durada}.',
+    'mapa.properEixida': 'Pròxima eixida de la parada 1: {hora}',
     'proper.estimat': "Hora estimada: l'avís oficial només publica les eixides.",
     'proper.noTempsReal': "Calculat amb l'horari oficial: l'app no sap on és l'autobús.",
     'ubic.boto': 'Troba la parada més propera',
@@ -169,6 +180,8 @@ export const TEXTOS = {
     'proper.ara': 'Ahora',
     'temps.min': '{m} min',
     'temps.hmin': '{h} h {m} min',
+    'temps.unaHora': 'una hora',
+    'temps.minuts': '{m} minutos',
     'hora.ales': 'a las {hora}',
     'hora.capales': 'hacia las {hora}',
     'hora.aprox': 'aprox.',
@@ -179,6 +192,15 @@ export const TEXTOS = {
     'proper.capMes': 'Hoy ya no hay más autobuses: {quan}.',
     'proper.finalitzat': 'Servicio finalizado. Consulta oliva.es.',
     'proper.capBus': 'No hay ningún autobús previsto en los próximos días.',
+    'proper.eixidaParada1': 'Es la hora de salida de la parada 1, {nom}. La vuelta completa dura aproximadamente {durada}: el autobús pasa por aquí más tarde.',
+    'proper.enCurs': 'El autobús que ha salido a las {hora} aún está haciendo la vuelta y puede pasar por aquí.',
+    'ubic.tardes': 'Hasta la parada tardas unos {min} min a pie.',
+    'anar.pujaSenseHora': 'Sube en la parada {parada}.',
+    'anar.baixaSenseHora': 'Bájate en la parada {parada} ({n} paradas después).',
+    'anar.voltaSenseHora': 'El autobús pasa por el final del recorrido (parada {num}) y sigue en la vuelta siguiente.',
+    'anar.eixida': 'Próxima salida de la parada 1: {hora}. La vuelta completa dura aproximadamente {durada}.',
+    'horari.durada': 'La vuelta completa dura aproximadamente {durada}.',
+    'mapa.properEixida': 'Próxima salida de la parada 1: {hora}',
     'proper.estimat': 'Hora estimada: el aviso oficial solo publica las salidas.',
     'proper.noTempsReal': 'Calculado con el horario oficial: la app no sabe dónde está el autobús.',
     'ubic.boto': 'Buscar la parada más cercana',
@@ -305,6 +327,8 @@ export const TEXTOS = {
     'proper.ara': 'Now',
     'temps.min': '{m} min',
     'temps.hmin': '{h} h {m} min',
+    'temps.unaHora': 'an hour',
+    'temps.minuts': '{m} minutes',
     'hora.ales': 'at {hora}',
     'hora.capales': 'at about {hora}',
     'hora.aprox': 'approx.',
@@ -315,6 +339,15 @@ export const TEXTOS = {
     'proper.capMes': 'No more buses today: {quan}.',
     'proper.finalitzat': 'This service has ended. Check oliva.es.',
     'proper.capBus': 'No buses are scheduled in the next few days.',
+    'proper.eixidaParada1': 'This is the departure time from stop 1, {nom}. A full loop takes about {durada}, so the bus passes here later.',
+    'proper.enCurs': 'The bus that left at {hora} is still on its loop and may pass here.',
+    'ubic.tardes': 'It is about a {min}-minute walk to the stop.',
+    'anar.pujaSenseHora': 'Get on at stop {parada}.',
+    'anar.baixaSenseHora': 'Get off at stop {parada} ({n} stops later).',
+    'anar.voltaSenseHora': 'The bus goes past the end of the route (stop {num}) and carries on into the next loop.',
+    'anar.eixida': 'Next departure from stop 1: {hora}. A full loop takes about {durada}.',
+    'horari.durada': 'A full loop takes about {durada}.',
+    'mapa.properEixida': 'Next departure from stop 1: {hora}',
     'proper.estimat': 'Estimated time: the official notice only gives departure times.',
     'proper.noTempsReal': 'Based on the official timetable: the app does not know where the bus is.',
     'ubic.boto': 'Find the nearest stop',
@@ -419,6 +452,49 @@ export const TEXTOS = {
 };
 
 let actual = 'va';
+const CODIS = { va: 'VA', es: 'ES', en: 'EN' };
+
+// Selector d'idioma desplegable: botó amb la bandera i el codi, i menú amb els tres idiomes.
+export function iniciaSelectorIdioma(canvia) {
+  const boto = document.getElementById('idioma-boto');
+  const menu = document.getElementById('idioma-menu');
+  const tanca = (enfoca) => {
+    menu.hidden = true;
+    boto.setAttribute('aria-expanded', 'false');
+    if (enfoca) boto.focus();
+  };
+  boto.addEventListener('click', () => {
+    const obri = menu.hidden;
+    menu.hidden = !obri;
+    boto.setAttribute('aria-expanded', String(obri));
+    if (obri) (menu.querySelector('[aria-current="true"]') || menu.querySelector('button')).focus();
+  });
+  menu.addEventListener('click', (e) => {
+    const opcio = e.target.closest ? e.target.closest('[data-idioma]') : null;
+    if (!opcio) return;
+    canvia(opcio.getAttribute('data-idioma'));
+    tanca(true);
+  });
+  document.addEventListener('click', (e) => {
+    if (!menu.hidden && !(e.target.closest && e.target.closest('.idiomes'))) tanca(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) tanca(true);
+  });
+}
+
+// Durada de la volta en text: «una hora» o «45 minuts».
+export const durada = (min) => (min === 60 ? t('temps.unaHora') : t('temps.minuts', { m: min }));
+
+// Marca l'idioma actual en el menú i en posa la bandera i el codi en el botó.
+export function marcaIdioma() {
+  document.querySelectorAll('[data-idioma]').forEach((b) => {
+    if (b.getAttribute('data-idioma') === actual) b.setAttribute('aria-current', 'true');
+    else b.removeAttribute('aria-current');
+  });
+  const bandera = document.querySelector('[data-idioma="' + actual + '"] svg');
+  document.getElementById('idioma-actual').innerHTML = (bandera ? bandera.outerHTML : '') + CODIS[actual];
+}
 
 // Idioma desat; si no n'hi ha, el del navegador; si no és cap dels tres, valencià.
 export function idiomaInicial() {

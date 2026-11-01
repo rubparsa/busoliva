@@ -1,6 +1,6 @@
 {
   "comprovat": "2026-10-31",
-  "pendent": "Falten els festius locals d'Oliva de 2026 i 2027 (ambit \"local\"): afegiu-los quan es confirmen en el DOGV o en la web de l'Ajuntament.",
+  "pendent": "Falten els festius locals d’Oliva de 2027 (encara no publicats). Per confirmar: si el 7-12-2026 és festiu local o només dia de lliure disposició escolar.",
   "festius": [
     {
       "data": "2026-01-01",
@@ -94,6 +94,19 @@
       }
     },
     {
+      "data": "2026-07-17",
+      "nom": {
+        "va": "Moros i Cristians",
+        "es": "Moros y Cristianos",
+        "en": "Moors and Christians festival"
+      },
+      "ambit": "local",
+      "font": {
+        "nom": "Calendari laboral d’Oliva 2026 (calendarios-laborales.es) i calendari escolar 2026-2027 (CEIP Desemparats d’Oliva)",
+        "url": "https://www.calendarios-laborales.es/calendario-laboral-oliva-2026-v"
+      }
+    },
+    {
       "data": "2026-08-15",
       "nom": {
         "va": "Assumpció de la Mare de Déu",
@@ -104,6 +117,19 @@
       "font": {
         "nom": "BOE-A-2025-21667 (BOE núm. 259, 28-10-2025)",
         "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667"
+      }
+    },
+    {
+      "data": "2026-09-08",
+      "nom": {
+        "va": "Mare de Déu del Rebollet",
+        "es": "Virgen del Rebollet",
+        "en": "Our Lady of Rebollet"
+      },
+      "ambit": "local",
+      "font": {
+        "nom": "Calendari laboral d’Oliva 2026 (calendarios-laborales.es) i calendari escolar 2026-2027 (CEIP Desemparats d’Oliva)",
+        "url": "https://www.calendarios-laborales.es/calendario-laboral-oliva-2026-v"
       }
     },
     {

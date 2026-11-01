@@ -34,6 +34,7 @@
       "18:00"
     ]
   },
+  "durada_volta_minuts": 60,
   "parades": [
     {
       "num": 1,
@@ -56,8 +57,8 @@
       },
       "lat": 38.921137,
       "lon": -0.1172105,
-      "minuts_des_de_eixida": 2,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 3,
@@ -68,8 +69,8 @@
       },
       "lat": 38.9206735,
       "lon": -0.1128734,
-      "minuts_des_de_eixida": 3,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 4,
@@ -80,8 +81,8 @@
       },
       "lat": 38.9247897,
       "lon": -0.1070542,
-      "minuts_des_de_eixida": 4,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 5,
@@ -92,8 +93,8 @@
       },
       "lat": 38.9265252,
       "lon": -0.0943053,
-      "minuts_des_de_eixida": 8,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 6,
@@ -104,44 +105,44 @@
       },
       "lat": 38.9252233,
       "lon": -0.0919995,
-      "minuts_des_de_eixida": 8,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 7,
       "punt": "via-ronda-illa-de-xipre",
       "nom": {
-        "va": "Via de Ronda (altura del carrer de l'Illa de Xipre)",
+        "va": "Via de Ronda (altura del carrer de l’Illa de Xipre)",
         "es": "Vía de Ronda (altura de la calle de la Isla de Chipre)"
       },
       "lat": 38.9232878,
       "lon": -0.089995,
-      "minuts_des_de_eixida": 9,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 8,
       "punt": "placa-europa",
       "nom": {
-        "va": "Plaça d'Europa",
+        "va": "Plaça d’Europa",
         "es": "Plaza de Europa"
       },
       "lat": 38.9219252,
       "lon": -0.0861289,
-      "minuts_des_de_eixida": 10,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 9,
       "punt": "sector5-ozieri",
       "nom": {
-        "va": "Sector 5 (carrer d'Ozieri)",
+        "va": "Sector 5 (carrer d’Ozieri)",
         "es": "Sector 5 (calle de Ozieri)"
       },
       "lat": 38.9160349,
       "lon": -0.0798671,
-      "minuts_des_de_eixida": 13,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 10,
@@ -152,8 +153,8 @@
       },
       "lat": 38.9178328,
       "lon": -0.0833813,
-      "minuts_des_de_eixida": 14,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 11,
@@ -164,20 +165,20 @@
       },
       "lat": 38.9192114,
       "lon": -0.0846409,
-      "minuts_des_de_eixida": 15,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 12,
       "punt": "via-ronda-illa-de-xipre",
       "nom": {
-        "va": "Via de Ronda (altura del carrer de l'Illa de Xipre)",
+        "va": "Via de Ronda (altura del carrer de l’Illa de Xipre)",
         "es": "Vía de Ronda (altura de la calle de la Isla de Chipre)"
       },
       "lat": 38.9232878,
       "lon": -0.089995,
-      "minuts_des_de_eixida": 16,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 13,
@@ -188,8 +189,8 @@
       },
       "lat": 38.9252233,
       "lon": -0.0919995,
-      "minuts_des_de_eixida": 17,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 14,
@@ -200,8 +201,8 @@
       },
       "lat": 38.9265252,
       "lon": -0.0943053,
-      "minuts_des_de_eixida": 18,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 15,
@@ -212,20 +213,20 @@
       },
       "lat": 38.9294189,
       "lon": -0.0949366,
-      "minuts_des_de_eixida": 18,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 16,
       "punt": "llauradors-assagador-carro",
       "nom": {
-        "va": "Avinguda dels Llauradors (altura del carrer de l'Assagador de Carro)",
+        "va": "Avinguda dels Llauradors (altura del carrer de l’Assagador de Carro)",
         "es": "Avenida de los Labradores (altura de la calle del Azagador de Carro)"
       },
       "lat": 38.9336409,
       "lon": -0.1026261,
-      "minuts_des_de_eixida": 20,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 17,
@@ -236,8 +237,8 @@
       },
       "lat": 38.9248187,
       "lon": -0.107704,
-      "minuts_des_de_eixida": 23,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 18,
@@ -248,8 +249,8 @@
       },
       "lat": 38.9239902,
       "lon": -0.1113179,
-      "minuts_des_de_eixida": 24,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 19,
@@ -260,8 +261,8 @@
       },
       "lat": 38.9231616,
       "lon": -0.1149318,
-      "minuts_des_de_eixida": 25,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     },
     {
       "num": 20,
@@ -272,8 +273,8 @@
       },
       "lat": 38.9246809,
       "lon": -0.1215502,
-      "minuts_des_de_eixida": 26,
-      "estimat": true
+      "minuts_des_de_eixida": null,
+      "estimat": false
     }
   ]
 }

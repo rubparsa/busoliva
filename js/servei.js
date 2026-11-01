@@ -88,7 +88,11 @@ export function sumaMinuts(hhmm, min) {
   return dos(h) + ':' + dos(total % 60);
 }
 
-export const pas = (eixida, parada) => eixida.ms + parada.minuts_des_de_eixida * MINUT;
+// Minuts des de l'eixida fins a una parada, si se saben (null si no).
+export const minutsConeguts = (parada) => (parada.minuts_des_de_eixida == null ? null : parada.minuts_des_de_eixida);
+
+// Instant de pas per una parada. Si no se sap, es dona l'hora d'eixida de la parada 1.
+export const pas = (eixida, parada) => eixida.ms + (minutsConeguts(parada) || 0) * MINUT;
 
 // Un bus compta com a pròxim fins que acaba el minut en què passa.
 export const pendent = (instant, ms) => instant - ms > -MINUT;
@@ -103,37 +107,53 @@ export function passades(servei, festius, parada, ms, quantes) {
   return res;
 }
 
-// Millor viatge entre dos punts. Com que és un circuit, un mateix punt pot tindre
-// dues parades (una per sentit): es tria la combinació que arriba abans. Si cal
-// passar pel final, es continua en la volta següent.
+// Última eixida que encara pot estar fent la volta (ha eixit fa menys que la durada de la volta).
+export function enCurs(servei, festius, ms) {
+  const durada = (servei.durada_volta_minuts || 0) * MINUT;
+  const llista = eixides(servei, festius, ms).filter((e) => e.ms <= ms - MINUT && e.ms > ms - durada);
+  return llista.length ? llista[llista.length - 1] : null;
+}
+
+// Millor viatge entre dos punts. Com que és un circuit, un mateix punt pot tindre dues
+// parades (una per sentit). Si se saben els minuts de pas, es tria la combinació que
+// arriba abans; si no, la que passa per menys parades. Si cal passar pel final, es
+// continua en la volta següent.
 export function viatge(servei, festius, puntOrigen, puntDesti, ms) {
   const ps = servei.parades;
   const ultima = ps.length - 1;
   const indexos = (punt, exclou) => ps.map((p, i) => (p.punt === punt && i !== exclou ? i : -1)).filter((i) => i >= 0);
-  const origens = indexos(puntOrigen, ultima);
-  const destins = indexos(puntDesti, 0);
+  const opcions = [];
+  indexos(puntOrigen, ultima).forEach((o) => indexos(puntDesti, 0).forEach((d) => {
+    opcions.push({ o, d, parades: d > o ? d - o : ultima - o + d, volta: d <= o });
+  }));
+  if (!opcions.length) return null;
+  const ambHores = opcions.filter((x) => minutsConeguts(ps[x.o]) != null && minutsConeguts(ps[x.d]) != null &&
+    (!x.volta || minutsConeguts(ps[ultima]) != null));
+  if (ambHores.length < opcions.length) {
+    const millor = opcions.sort((a, b) => a.parades - b.parades)[0];
+    const seguent = passades(servei, festius, ps[0], ms, 1)[0];
+    return { origen: ps[millor.o], desti: ps[millor.d], parades: millor.parades, volta: millor.volta, ambHores: false, eixida: seguent ? seguent.eixida : null };
+  }
   const llista = eixides(servei, festius, ms);
   let millor = null;
   for (let k = 0; k < llista.length; k++) {
     if (millor && llista[k].ms > millor.arriba) break;
-    origens.forEach((o) => {
-      const puja = pas(llista[k], ps[o]);
+    opcions.forEach((x) => {
+      const puja = pas(llista[k], ps[x.o]);
       if (!pendent(puja, ms)) return;
-      destins.forEach((d) => {
-        let volta = null;
-        let arriba;
-        if (d > o) {
-          arriba = pas(llista[k], ps[d]);
-        } else {
-          const final = pas(llista[k], ps[ultima]);
-          volta = llista.slice(k + 1).filter((e) => e.ms >= final)[0];
-          if (!volta) return;
-          arriba = pas(volta, ps[d]);
-        }
-        if (!millor || arriba < millor.arriba) {
-          millor = { origen: ps[o], desti: ps[d], puja, arriba, volta, final: volta ? pas(llista[k], ps[ultima]) : null };
-        }
-      });
+      let volta = null;
+      let arriba;
+      if (!x.volta) {
+        arriba = pas(llista[k], ps[x.d]);
+      } else {
+        const final = pas(llista[k], ps[ultima]);
+        volta = llista.slice(k + 1).filter((e) => e.ms >= final)[0];
+        if (!volta) return;
+        arriba = pas(volta, ps[x.d]);
+      }
+      if (!millor || arriba < millor.arriba) {
+        millor = { origen: ps[x.o], desti: ps[x.d], parades: x.parades, ambHores: true, puja, arriba, volta, final: volta ? pas(llista[k], ps[ultima]) : null };
+      }
     });
   }
   return millor;

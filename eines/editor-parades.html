@@ -25,7 +25,7 @@
 <body>
 <header>
   <h1>Editor de parades</h1>
-  <p>Ferramenta interna (no enllaçada des de l'app). Arrossega els marcadors fins a la parada real, corregeix els minuts de pas i exporta el fitxer. Després substitueix <code>data/servei.json</code> i executa <code>npm run recorregut</code>.</p>
+  <p>Ferramenta interna (no enllaçada des de l'app). Arrossega els marcadors fins a la parada real, posa els minuts de pas si els saps (deixa'ls buits si no) i exporta el fitxer. Després substitueix <code>data/servei.json</code> i executa <code>npm run recorregut</code>.</p>
 </header>
 <main>
   <div id="mapa"></div>
@@ -55,7 +55,8 @@
 
   // Avisa si els minuts no van en ordre creixent al llarg del recorregut.
   function comprova() {
-    const mal = servei.parades.filter((p, i) => i > 0 && p.minuts_des_de_eixida < servei.parades[i - 1].minuts_des_de_eixida);
+    const coneguts = servei.parades.filter((p) => p.minuts_des_de_eixida != null);
+    const mal = coneguts.filter((p, i) => i > 0 && p.minuts_des_de_eixida < coneguts[i - 1].minuts_des_de_eixida);
     const avis = document.getElementById('avis');
     avis.hidden = !mal.length;
     avis.textContent = mal.length ? 'Els minuts han de créixer al llarg del recorregut. Revisa les parades: ' + mal.map((p) => p.num).join(', ') + '.' : '';
@@ -66,13 +67,13 @@
     '<td>' + p.num + '</td>' +
     '<td>' + escapa(p.nom.va) + '</td>' +
     '<td class="coord" id="coord-' + i + '">' + p.lat + ', ' + p.lon + '</td>' +
-    '<td><input type="number" min="0" step="1" data-i="' + i + '" data-camp="minuts" value="' + p.minuts_des_de_eixida + '" aria-label="Minuts des de l\'eixida, parada ' + p.num + '"></td>' +
+    '<td><input type="number" min="0" step="1" data-i="' + i + '" data-camp="minuts" value="' + (p.minuts_des_de_eixida == null ? '' : p.minuts_des_de_eixida) + '" placeholder="?" aria-label="Minuts des de l\'eixida, parada ' + p.num + '"></td>' +
     '<td><input type="checkbox" data-i="' + i + '" data-camp="estimat"' + (p.estimat ? ' checked' : '') + ' aria-label="Temps estimat, parada ' + p.num + '"></td>' +
     '</tr>').join('');
 
   document.getElementById('files').addEventListener('input', (e) => {
     const p = servei.parades[+e.target.dataset.i];
-    if (e.target.dataset.camp === 'minuts') p.minuts_des_de_eixida = Math.max(0, Math.round(+e.target.value || 0));
+    if (e.target.dataset.camp === 'minuts') p.minuts_des_de_eixida = e.target.value === '' ? null : Math.max(0, Math.round(+e.target.value));
     if (e.target.dataset.camp === 'estimat') p.estimat = e.target.checked;
     comprova();
   });
