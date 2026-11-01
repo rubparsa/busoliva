@@ -24,6 +24,11 @@
   --coral-clar: #FBE4DB;
   --vora: #8A7A5C;
   --blanc: #fff;
+  --cap-fons: #14324E;
+  --cap-text: #F7F0E1;
+  --linia: #e6dcc6;
+  --destacat: #FFE9A8;
+  --mapa-fons: #dfe8ee;
   --xifres: 'Archivo Black', 'Arial Black', sans-serif;
 }
 
@@ -66,7 +71,7 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
 .salta:focus { top: .5rem; }
 
 /* Capçalera i idiomes */
-.capcalera { background: var(--ink); color: var(--sand); }
+.capcalera { background: var(--cap-fons); color: var(--cap-text); }
 .capcalera-dins {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: .5rem; padding-top: .5rem; padding-bottom: .5rem;
@@ -77,11 +82,13 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
 .idiomes { display: flex; gap: .375rem; }
 .idiomes button {
   min-width: 44px; min-height: 44px; padding: 0 .5rem;
-  border: 2px solid var(--sand); border-radius: 8px;
-  background: transparent; color: var(--sand);
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border: 2px solid var(--cap-text); border-radius: 8px;
+  background: transparent; color: var(--cap-text); font-size: .75rem; line-height: 1;
   font: inherit; cursor: pointer;
 }
-.idiomes button[aria-pressed="true"] { background: var(--sand); color: var(--ink); }
+.idiomes button[aria-pressed="true"] { background: var(--cap-text); color: var(--cap-fons); }
+.idiomes svg { display: block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(127, 127, 127, .6); }
 
 /* Bàner fix del servei temporal */
 .banner { background: var(--coral-clar); border-bottom: 4px solid var(--coral); padding: .125rem 0; font-size: .9375rem; line-height: 1.4; }
@@ -151,9 +158,32 @@ input[type="search"], select {
 .modes { display: flex; flex-wrap: wrap; gap: .5rem; }
 
 html.text-gran { font-size: 125%; }
+
+/* Mode fosc: per defecte segueix el sistema; el botó de «Visualització» el força (fosc/clar). */
+@media screen and (prefers-color-scheme: dark) {
+  html:not(.clar) {
+  --ink: #EDE6D6; --sand: #0E1A26; --blanc: #172A3D; --mar: #8CC4FF; --teal: #3CC2BE;
+  --coral: #FF8A65; --coral-fosc: #FF9E80; --coral-clar: #3B231C; --vora: #7D8FA3;
+  --cap-fons: #08121C; --cap-text: #EDE6D6; --linia: #2B4157; --destacat: #4A3D10; --mapa-fons: #1D2F40;
+  color-scheme: dark;
+  }
+}
+@media screen {
+  html.fosc {
+  --ink: #EDE6D6; --sand: #0E1A26; --blanc: #172A3D; --mar: #8CC4FF; --teal: #3CC2BE;
+  --coral: #FF8A65; --coral-fosc: #FF9E80; --coral-clar: #3B231C; --vora: #7D8FA3;
+  --cap-fons: #08121C; --cap-text: #EDE6D6; --linia: #2B4157; --destacat: #4A3D10; --mapa-fons: #1D2F40;
+  color-scheme: dark;
+  }
+  html.fosc .leaflet-popup-content-wrapper, html.fosc .leaflet-popup-tip,
+  html.fosc .mapa .leaflet-control-attribution { background: var(--blanc); color: var(--ink); }
+}
+
 html.alt-contrast {
-  --ink: #000; --sand: #fff; --mar: #002B66; --teal: #00534F;
+  --ink: #000; --sand: #fff; --blanc: #fff; --mar: #002B66; --teal: #00534F;
   --coral: #8A1C00; --coral-fosc: #8A1C00; --coral-clar: #fff; --vora: #000;
+  --cap-fons: #000; --cap-text: #fff; --linia: #000; --destacat: #fff; --mapa-fons: #dfe8ee;
+  color-scheme: light;
 }
 html.alt-contrast .targeta, html.alt-contrast .avis, html.alt-contrast .avis-oficial { border: 3px solid #000; }
 html.alt-contrast a { text-decoration-thickness: 2px; }
@@ -194,15 +224,15 @@ html.alt-contrast :focus { outline: 4px solid #FFD400; box-shadow: 0 0 0 7px #00
 @media (min-width: 40rem) { .taules { grid-template-columns: 1fr 1fr; align-items: start; } }
 table.horari { width: 100%; border-collapse: collapse; background: var(--blanc); border: 1px solid var(--vora); }
 .horari caption { text-align: left; font-weight: 700; padding: .25rem 0 .5rem; }
-.horari th, .horari td { padding: .5rem .75rem; text-align: left; border-bottom: 1px solid #e6dcc6; }
-.horari tr.proxima td { background: #FFE9A8; font-weight: 700; }
+.horari th, .horari td { padding: .5rem .75rem; text-align: left; border-bottom: 1px solid var(--linia); }
+.horari tr.proxima td { background: var(--destacat); font-weight: 700; }
 .etiqueta {
   display: inline-block; padding: 0 .5rem; border-radius: 999px;
   background: var(--coral-fosc); color: var(--blanc); font-size: .8125rem; font-weight: 400;
 }
 
 /* Mapa */
-.mapa { height: 65vh; min-height: 20rem; border: 1px solid var(--vora); border-radius: 12px; background: #dfe8ee; }
+.mapa { height: 65vh; min-height: 20rem; border: 1px solid var(--vora); border-radius: 12px; background: var(--mapa-fons); }
 .mapa .leaflet-control-attribution a { color: var(--mar); }
 .marcador span {
   display: flex; align-items: center; justify-content: center;

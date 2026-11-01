@@ -171,7 +171,8 @@ function anuncia(parts) {
 function pintaAPeu(p, primer, ara) {
   const el = $('#ubic-apeu');
   if (!estat.ubicacio) { el.hidden = true; return; }
-  const min = S.minutsAPeu(S.distancia(estat.ubicacio, p));
+  const d = estat.distancies.filter((x) => x.parada === p)[0];
+  const min = S.minutsAPeu(d.metres);
   if (primer.ms - ara >= min * 60000) {
     el.className = 'nota';
     el.textContent = t('ubic.atemps', { min });
@@ -188,8 +189,8 @@ function pintaProperes() {
   const caixa = $('#ubic-properes');
   $('#ubic-estat').textContent = estat.ubicEstat ? t(estat.ubicEstat) : '';
   if (!estat.ubicacio) { caixa.hidden = true; return; }
-  $('#llista-properes').innerHTML = S.properes(estat.servei, estat.ubicacio, 3).map((r) =>
-    botoParada(r.parada, t('ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
+  $('#llista-properes').innerHTML = S.properes(estat.distancies, 3).map((r) =>
+    botoParada(r.parada, t(r.aprox ? 'ubic.distanciaAprox' : 'ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
   caixa.hidden = false;
 }
 
@@ -198,15 +199,32 @@ function localitza() {
   estat.ubicEstat = 'ubic.buscant';
   pintaProperes();
   navigator.geolocation.getCurrentPosition((pos) => {
-    estat.ubicacio = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-    estat.ubicEstat = '';
+    const ubicacio = { lat: pos.coords.latitude, lon: pos.coords.longitude };
     desa('ubicacio', '1');
-    tria(S.properes(estat.servei, estat.ubicacio, 1)[0].parada.num, false);
+    carregaCarrers().then((graf) => {
+      estat.ubicacio = ubicacio;
+      estat.distancies = S.distanciesAPeu(estat.servei, graf, ubicacio);
+      estat.ubicEstat = '';
+      tria(S.properes(estat.distancies, 1)[0].parada.num, false);
+    });
   }, (error) => {
     if (error.code === 1) desa('ubicacio', null);
     estat.ubicEstat = error.code === 1 ? 'ubic.denegat' : 'ubic.error';
     pintaProperes();
   }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+}
+
+// Xarxa de carrers (data/carrers.json) per a la distància a peu. Només es demana en
+// localitzar; si no n'hi ha o falla, es fa servir la línia recta corregida.
+let carrers = null;
+function carregaCarrers() {
+  if (!carrers) {
+    carrers = fetch('data/carrers.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => S.preparaCarrers(json))
+      .catch(() => { carrers = null; return null; });
+  }
+  return carrers;
 }
 
 // Si ja hi ha permís, es busca la parada més propera en obrir l'app.
@@ -261,6 +279,9 @@ function comparteix() {
   }
 }
 const MODES = { contrast: 'alt-contrast', text: 'text-gran' };
+const sistemaFosc = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+// Mode fosc: «1» forçat, «0» forçat clar; sense valor, segueix el sistema.
+const esFosc = () => llig('fosc') === '1' || (llig('fosc') !== '0' && !!sistemaFosc && sistemaFosc.matches);
 function aplicaModes() {
   Object.keys(MODES).forEach((mode) => {
     const actiu = llig(mode) === '1';
@@ -268,6 +289,10 @@ function aplicaModes() {
     const boto = $('[data-mode="' + mode + '"]');
     if (boto) boto.setAttribute('aria-pressed', String(actiu));
   });
+  const fosc = esFosc();
+  document.documentElement.classList.toggle('fosc', fosc);
+  document.documentElement.classList.toggle('clar', !fosc);
+  $('[data-mode="fosc"]').setAttribute('aria-pressed', String(fosc));
 }
 
 // ---------- Selector i cerca ----------
@@ -496,10 +521,12 @@ function inicia() {
     const modeBoto = e.target.closest ? e.target.closest('[data-mode]') : null;
     if (modeBoto) {
       const mode = modeBoto.getAttribute('data-mode');
-      desa(mode, llig(mode) === '1' ? null : '1');
+      if (mode === 'fosc') desa('fosc', esFosc() ? '0' : '1');
+      else desa(mode, llig(mode) === '1' ? null : '1');
       aplicaModes();
     }
   });
+  if (sistemaFosc && sistemaFosc.addEventListener) sistemaFosc.addEventListener('change', aplicaModes);
   $('#boto-ubicacio').addEventListener('click', localitza);
   $('#boto-favorita').addEventListener('click', commutaFavorita);
   $('#boto-comparteix').addEventListener('click', comparteix);

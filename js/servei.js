@@ -149,10 +149,97 @@ export function distancia(a, b) {
 
 export const minutsAPeu = (metres) => Math.ceil(metres / 75);
 
+// Sense xarxa de carrers, la línia recta es multiplica per este factor (estimat,
+// habitual en ciutat) i el resultat es marca com a aproximat.
+export const FACTOR_LINIA_RECTA = 1.3;
+
+// Prepara data/carrers.json (nodes en graus × 1e5 i arestes [a, b, metres]) per a buscar camins.
+export function preparaCarrers(json) {
+  const n = json && json.nodes ? json.nodes.length / 2 : 0;
+  if (!n) return null;
+  const veins = [];
+  for (let i = 0; i < n; i++) veins.push([]);
+  for (let i = 0; i < json.arestes.length; i += 3) {
+    const a = json.arestes[i];
+    const b = json.arestes[i + 1];
+    const m = json.arestes[i + 2];
+    veins[a].push(b, m);
+    veins[b].push(a, m);
+  }
+  const punt = (i) => ({ lat: json.nodes[2 * i] / 1e5, lon: json.nodes[2 * i + 1] / 1e5 });
+  return { n, veins, punt };
+}
+
+function nodeMesProper(graf, pos) {
+  let millor = 0;
+  let dMillor = Infinity;
+  for (let i = 0; i < graf.n; i++) {
+    const d = distancia(pos, graf.punt(i));
+    if (d < dMillor) { dMillor = d; millor = i; }
+  }
+  return { node: millor, metres: dMillor };
+}
+
+// Distància a peu pel carrer des de pos fins a cada parada (Dijkstra sobre la xarxa
+// de carrers, calculat en el mòbil). Retorna null per a les parades sense camí.
+export function distanciesCarrer(graf, pos, parades) {
+  const inici = nodeMesProper(graf, pos);
+  const dist = new Float64Array(graf.n).fill(Infinity);
+  const cua = [[inici.metres, inici.node]];
+  dist[inici.node] = inici.metres;
+  const puja = (x) => {
+    cua.push(x);
+    for (let i = cua.length - 1; i > 0;) {
+      const pare = (i - 1) >> 1;
+      if (cua[pare][0] <= cua[i][0]) break;
+      [cua[pare], cua[i]] = [cua[i], cua[pare]];
+      i = pare;
+    }
+  };
+  const trau = () => {
+    const primer = cua[0];
+    const ultim = cua.pop();
+    if (cua.length) {
+      cua[0] = ultim;
+      for (let i = 0; ;) {
+        const e = 2 * i + 1;
+        const d = e + 1;
+        let m = i;
+        if (e < cua.length && cua[e][0] < cua[m][0]) m = e;
+        if (d < cua.length && cua[d][0] < cua[m][0]) m = d;
+        if (m === i) break;
+        [cua[m], cua[i]] = [cua[i], cua[m]];
+        i = m;
+      }
+    }
+    return primer;
+  };
+  while (cua.length) {
+    const [d, u] = trau();
+    if (d > dist[u]) continue;
+    const v = graf.veins[u];
+    for (let k = 0; k < v.length; k += 2) {
+      const nd = d + v[k + 1];
+      if (nd < dist[v[k]]) { dist[v[k]] = nd; puja([nd, v[k]]); }
+    }
+  }
+  return parades.map((p) => {
+    const desti = nodeMesProper(graf, p);
+    return dist[desti.node] === Infinity ? null : dist[desti.node] + desti.metres;
+  });
+}
+
+// Distància a peu a cada parada: pel carrer si hi ha xarxa; si no, línia recta corregida.
+export function distanciesAPeu(servei, graf, pos) {
+  const carrer = graf ? distanciesCarrer(graf, pos, servei.parades) : [];
+  return servei.parades.map((p, i) => (carrer[i] != null
+    ? { parada: p, metres: carrer[i], aprox: false }
+    : { parada: p, metres: distancia(pos, p) * FACTOR_LINIA_RECTA, aprox: true }));
+}
+
 // L'última parada només és d'arribada: no compta per a agafar el bus.
-export function properes(servei, pos, quantes) {
-  return servei.parades.slice(0, -1)
-    .map((parada) => ({ parada, metres: distancia(pos, parada) }))
+export function properes(distancies, quantes) {
+  return distancies.slice(0, -1)
     .sort((a, b) => a.metres - b.metres || a.parada.num - b.parada.num)
     .slice(0, quantes);
 }

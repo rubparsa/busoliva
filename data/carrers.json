@@ -1,0 +1,5 @@
+{
+  "nota": "Xarxa de carrers per a la distància a peu. Es genera amb npm run carrers (dades © col·laboradors d'OpenStreetMap, ODbL). Mentre estiga buida, l'app usa la línia recta corregida.",
+  "nodes": [],
+  "arestes": []
+}

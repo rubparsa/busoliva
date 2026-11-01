@@ -9,7 +9,8 @@
     "test": "node --test tests/acceptacio.test.mjs",
     "vendor": "node eines/copia-vendor.mjs",
     "recorregut": "node eines/genera-recorregut.mjs",
-    "qr": "node eines/genera-qr.mjs"
+    "qr": "node eines/genera-qr.mjs",
+    "carrers": "node eines/genera-carrers.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

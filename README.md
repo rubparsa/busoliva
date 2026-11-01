@@ -7,14 +7,14 @@ L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial,
 ## Què fa
 
 - **Pròxim bus**: la parada més propera (o la triada), un compte enrere, l'hora i les 3 passades següents. Avisa de l'últim bus del dia i de quan ja no en queden.
-- **Parada més propera**: amb la ubicació del mòbil, que no ix del dispositiu. Mostra 2 alternatives, la distància i els minuts a peu, i avisa si no arribes a temps. També hi ha un selector i una cerca per nom o número.
+- **Parada més propera**: amb la ubicació del mòbil, que no ix del dispositiu. Mostra 2 alternatives, la distància i els minuts a peu (pel carrer si hi ha xarxa de carrers; si no, línia recta × 1,3 marcada «aprox.»), i avisa si no arribes a temps. També hi ha un selector i una cerca per nom o número.
 - **On vols anar?**: tria la parada del sentit correcte (és un circuit) i dona l'hora d'arribada aproximada.
 - **Horari complet**: dues taules (de dilluns a divendres; dissabtes, diumenges i festius) amb la pròxima eixida destacada.
 - **Mapa** (Leaflet i OpenStreetMap; necessita connexió) i **diagrama de la línia** (funciona sense connexió).
 - **Avisos** amb data d'inici i de fi i bàner del servei temporal. La data de comprovació i l'enllaç a la font són en «Sobre l'app» i en els cartells.
 - **Tres idiomes**: valencià (per defecte), castellà i anglès. Es recorda l'idioma triat.
 - **Sense connexió**: funciona tot menys el mapa i avisa de la data de les dades desades. Avisa quan hi ha una versió nova i explica com instal·lar-la en iOS.
-- **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`) i modes d'**alt contrast** i **text gran**.
+- **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`) i modes d'**alt contrast**, **text gran** i **fosc** (per defecte segueix el del mòbil).
 
 ## Estructura
 
@@ -66,6 +66,10 @@ Per a corregir coordenades i minuts, useu l'**editor de parades**:
 4. Executeu `npm run recorregut` per a tornar a generar el traçat del mapa (`data/recorregut.geojson`). Amb connexió, es calcula per carrers amb OSRM; sense connexió, es desen línies rectes i el mapa ho avisa. L'app no crida mai OSRM mentre funciona.
 5. Si canvia la numeració de les parades, executeu `npm run qr` per a tornar a fer els codis QR dels cartells.
 
+### Xarxa de carrers: `data/carrers.json`
+
+Serveix per a calcular en el mòbil la distància a peu pel carrer fins a cada parada. Es genera a partir d'OpenStreetMap amb `npm run carrers` (cal connexió). Torneu a generar-la si canvien les parades de lloc o si es tallen o s'obrin carrers. Mentre estiga buida (com ara), l'app fa servir la línia recta multiplicada per 1,3 i ho marca com a aproximat. Només es descarrega quan es toca «Troba la parada més propera».
+
 ### Festius: `data/festius.json`
 
 Cada festiu té `data`, `nom` (en `va`, `es` i `en`), `ambit` (`nacional`, `autonomic` o `local`) i `font` (`nom` i `url` del BOE, del DOGV o de l'Ajuntament). Els dies feiners que són festius usen l'horari de dissabtes, diumenges i festius.
@@ -104,6 +108,7 @@ Qualsevol servidor estàtic serveix, perquè totes les rutes són relatives. La 
 | `npm start` | Servidor local que serveix l'app sota `/busoliva/`, com GitHub Pages. |
 | `npm test` | Els 11 tests d'acceptació (Playwright amb el rellotge fixat, zona Europe/Madrid i comprovacions d'accessibilitat amb axe) i la comprovació de pes de la primera càrrega (menys de 300 KB). |
 | `npm run recorregut` | Torna a generar el traçat del mapa a partir de les parades. |
+| `npm run carrers` | Genera la xarxa de carrers per a la distància a peu (`data/carrers.json`). |
 | `npm run qr` | Torna a generar els codis QR dels cartells (`URL_APP=https://…/ npm run qr` per a una altra adreça). |
 | `npm run vendor` | Torna a copiar Leaflet i les fonts des de `node_modules`. |
 
@@ -124,6 +129,7 @@ Després de cada canvi, n'hi ha prou de tornar a pujar els fitxers a `main`. Rec
 - **Noms** de les parades 1–16 en valencià i 17–20 en castellà, pendents de contrastar amb l'avís oficial.
 - **Festius**: els nacionals i autonòmics s'han de contrastar amb el text del BOE i del DOGV. Falten els locals d'Oliva.
 - **Traçat del mapa**: línies rectes fins que s'execute `npm run recorregut` amb connexió.
+- **Xarxa de carrers**: buida fins que s'execute `npm run carrers` amb connexió.
 
 ## Privacitat
 

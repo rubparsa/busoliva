@@ -37,7 +37,7 @@ after(async () => {
   await srv.tanca();
 });
 
-async function obri({ hora, zona = 'Europe/Madrid', amplada = 360, geolocation, servidor = srv } = {}) {
+async function obri({ hora, zona = 'Europe/Madrid', amplada = 360, geolocation, servidor = srv, abans } = {}) {
   const context = await navegador.newContext({
     timezoneId: zona,
     locale: 'ca-ES',
@@ -53,6 +53,7 @@ async function obri({ hora, zona = 'Europe/Madrid', amplada = 360, geolocation, 
   });
   page.on('pageerror', (e) => errors.push(String(e)));
   if (hora) await page.clock.setFixedTime(hora);
+  if (abans) await abans(context);
   await page.goto(servidor.url);
   await page.waitForSelector('#proper-parada[data-num]', { state: 'attached' });
   return { context, page, errors };
@@ -170,8 +171,37 @@ test('6. Geolocalització en les coordenades de la parada 8 → la més propera 
   assert.equal(r.triada, '8');
   assert.equal(r.properes[0], '8');
   assert.equal(r.properes.length, 3, 'la més propera i 2 alternatives');
-  assert.match(r.detall, /^0 m · 0 min a peu$/);
+  // Sense xarxa de carrers (data/carrers.json buit): línia recta corregida i marcada com a aproximada.
+  assert.match(r.detall, /^0 m · uns 0 min a peu \(aprox\.\)$/);
   await context.close();
+
+  // Amb xarxa de carrers: distància pel carrer, calculada en el mòbil. Xarxa de prova en L
+  // que va de la parada 8 a la 9 passant per la cantonada (lat de la 9, lon de la 8).
+  const p9 = parada(9);
+  const e5 = (x) => Math.round(x * 1e5);
+  const cantonada = { lat: p9.lat, lon: p8.lon };
+  const tram = (a, b) => Math.round(2 * 6371008.8 * Math.asin(Math.sqrt(Math.sin((b.lat - a.lat) * Math.PI / 360) ** 2 +
+    Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin((b.lon - a.lon) * Math.PI / 360) ** 2)));
+  const xarxa = {
+    nodes: [e5(p8.lat), e5(p8.lon), e5(cantonada.lat), e5(cantonada.lon), e5(p9.lat), e5(p9.lon)],
+    arestes: [0, 1, tram(p8, cantonada), 1, 2, tram(cantonada, p9)],
+  };
+  const segon = await obri({
+    hora: madrid('2026-11-02', '09:00'),
+    geolocation: { latitude: p8.lat, longitude: p8.lon },
+    abans: (context) => context.route('**/data/carrers.json', (ruta) => ruta.fulfill({ json: xarxa })),
+  });
+  await segon.page.click('#boto-ubicacio');
+  await segon.page.waitForSelector('#llista-properes li');
+  const primera = await segon.page.evaluate(() => document.querySelector('#llista-properes button').dataset.num);
+  assert.equal(primera, '8');
+  await triaParada(segon.page, 9);
+  const apeu = await segon.page.evaluate(() => document.querySelector('#ubic-apeu').textContent);
+  const metres9 = xarxa.arestes[2] + xarxa.arestes[5];
+  const recta9 = Math.ceil(tram(p8, p9) * 1.3 / 75);
+  assert.notEqual(Math.ceil(metres9 / 75), recta9, 'la xarxa de prova ha de donar un resultat diferent de la línia recta');
+  assert.match(apeu, new RegExp(`uns ${Math.ceil(metres9 / 75)} min`), apeu);
+  await segon.context.close();
 });
 
 test('7. De la parada 9 a la parada 1 → arribada aproximada segons els minuts de servei.json', async () => {
@@ -292,6 +322,14 @@ test('10. axe sense violacions serious/critical, sense desplaçament horitzontal
     for (const vista of ['proper', 'horari', 'sobre']) {
       await vesA(page, vista);
       await revisa(`${vista} (alt contrast i text gran)`);
+    }
+    // Mode fosc
+    await page.click('[data-mode="contrast"]');
+    await page.click('[data-mode="text"]');
+    await page.emulateMedia({ colorScheme: 'dark' });
+    for (const vista of ['proper', 'horari', 'linia', 'mapa', 'sobre']) {
+      await vesA(page, vista);
+      await revisa(`${vista} (mode fosc)`);
     }
     // Cartells per a imprimir (P2)
     for (const ruta of ['cartells.html?parada=8', 'cartells.html']) {

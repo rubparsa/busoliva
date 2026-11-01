@@ -69,6 +69,10 @@ function pinta() {
 try {
   document.documentElement.classList.toggle('alt-contrast', localStorage.getItem('busoliva.contrast') === '1');
   document.documentElement.classList.toggle('text-gran', localStorage.getItem('busoliva.text') === '1');
+  const fosc = localStorage.getItem('busoliva.fosc');
+  const sistema = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.classList.toggle('fosc', fosc === '1' || (fosc !== '0' && sistema));
+  document.documentElement.classList.toggle('clar', !(fosc === '1' || (fosc !== '0' && sistema)));
 } catch (e) { /* sense emmagatzematge */ }
 estableixIdioma(idiomaInicial());
 pinta();
