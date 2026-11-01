@@ -100,13 +100,17 @@ html.fosc .icona-sol { display: block; }
 /* Pantalles estretes: títol en dues línies i contrast, text gran i fosc dins del menú «Aa». */
 @media (max-width: 36rem) {
   .capcalera-dins { flex-wrap: nowrap; }
-  .marca { min-width: 0; font-size: .9375rem; }
+  .marca { min-width: 0; font-size: .875rem; }
+  .idioma-boto { gap: .3rem; padding: 0 .4rem; }
+  .capcalera-dins { gap: .375rem; }
+  .eines-cap { gap: .3rem; }
   .marca-textos { display: flex; flex-direction: column; }
   .eines-cap { flex: 0 0 auto; }
   .codi-idioma { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .marca-lloc { font-size: .8125rem; }
   .eines-cap { position: relative; }
-  .ajustos-boto { display: inline-flex; font: 1rem/1 var(--xifres); }
+  .ajustos-boto { display: inline-flex; gap: 2px; width: auto; padding: 0 .3rem; font: .75rem/1 var(--xifres); }
+  .ajustos-boto svg { width: 16px; height: 16px; }
   .ajustos-boto[aria-expanded="true"] { background: var(--cap-text); color: var(--cap-fons); }
   .ajustos {
     position: absolute; right: 0; top: calc(100% + .375rem); z-index: 1100;
