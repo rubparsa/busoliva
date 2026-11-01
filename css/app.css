@@ -93,7 +93,11 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
 .icona-sol, html.fosc .icona-lluna { display: none; }
 html.fosc .icona-sol { display: block; }
 .marca-lloc { font-family: 'Lexend', sans-serif; }
-@media (max-width: 26rem) { .marca-lloc { display: none; } }
+@media (max-width: 26rem) {
+  .marca-lloc { display: none; }
+  /* En pantalles estretes només es veu la icona; el títol queda per als lectors de pantalla. */
+  .marca-text { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
 .idiomes { position: relative; }
 .idioma-boto {
   display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .75rem;

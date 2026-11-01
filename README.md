@@ -47,7 +47,7 @@ Totes les dades són en `data/`. La interfície no té cap hora ni cap parada es
 | `font.url`, `font.titol`, `font.data_avis` | Enllaç i dades de l'avís oficial. |
 | `durada_volta_minuts` | Durada aproximada de la volta completa (l'avís diu «aproximadament una hora»). |
 | `gratuit` | `true` si el servei és gratuït. |
-| `contacte` | Enllaç de «Avisa d'un error» (una adreça `mailto:…` o una web). Si és `null`, l'enllaç no ix. |
+| `contacte` | Enllaç de «Avisa d'un error» (ara `mailto:rubparsa@gmail.com`; també pot ser una web). Si és `null`, l'enllaç no ix. |
 
 ### Parades: `data/servei.json`, camp `parades`
 
