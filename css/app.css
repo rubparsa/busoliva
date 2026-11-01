@@ -76,7 +76,22 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: .5rem; padding-top: .5rem; padding-bottom: .5rem;
 }
-.marca { margin: 0; font: 1rem/1.2 var(--xifres); }
+.marca {
+  display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin-right: auto;
+  font: 1rem/1.2 var(--xifres); color: var(--cap-text); text-decoration: none;
+}
+.icona-bus { flex: 0 0 auto; color: var(--cap-text); }
+.eines-cap { display: flex; align-items: center; gap: .375rem; margin-left: auto; }
+.boto-icona {
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;
+  border: 2px solid var(--cap-text); border-radius: 12px; background: transparent; color: var(--cap-text);
+  font: 1rem/1 var(--xifres); cursor: pointer;
+}
+.boto-icona[aria-pressed="true"] { background: var(--cap-text); color: var(--cap-fons); }
+.icona-text { font-size: .75rem; }
+.icona-text span { font-size: 1.125rem; }
+.icona-sol, html.fosc .icona-lluna { display: none; }
+html.fosc .icona-sol { display: block; }
 .marca-lloc { font-family: 'Lexend', sans-serif; }
 @media (max-width: 26rem) { .marca-lloc { display: none; } }
 .idiomes { position: relative; }
@@ -119,8 +134,12 @@ h1:focus, main:focus, .targeta:focus { outline-offset: 4px; }
   list-style: none; margin: .75rem 0 0; padding: 0;
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .375rem;
 }
-@media (max-width: 20rem) { .navegacio ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 40rem) { .navegacio ul { grid-template-columns: repeat(6, auto); justify-content: start; } }
+/* Cinc pestanyes: 3 + 2 en el mòbil i totes en una fila, a tot l'ample, en pantalles grans. */
+.navegacio ul { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.navegacio li { grid-column: span 2; }
+.navegacio li:nth-child(n+4) { grid-column: span 3; }
+@media (max-width: 20rem) { .navegacio ul { grid-template-columns: minmax(0, 1fr); } .navegacio li, .navegacio li:nth-child(n+4) { grid-column: auto; } }
+@media (min-width: 40rem) { .navegacio ul { grid-template-columns: repeat(5, minmax(0, 1fr)); } .navegacio li, .navegacio li:nth-child(n+4) { grid-column: auto; } }
 .navegacio a {
   display: flex; align-items: center; justify-content: center; min-height: 44px; height: 100%;
   padding: .25rem .5rem; border: 2px solid var(--mar); border-radius: 12px;
@@ -158,6 +177,28 @@ input[type="search"], select {
 .proper-hora { margin: .25rem 0 .5rem; font: clamp(1.5rem, 7vw, 2.25rem)/1.15 var(--xifres); color: var(--mar); }
 .proper-seguents ul { list-style: none; display: inline-flex; flex-wrap: wrap; gap: .25rem .75rem; margin: 0; padding: 0; }
 .proper-seguents li { font-weight: 700; }
+
+/* Sentit, altra vorera i peu */
+.sentit-etiqueta {
+  display: inline-block; margin: .375rem 0 0; padding: .125rem .625rem;
+  border: 2px solid var(--mar); border-radius: 999px; color: var(--mar); font-weight: 700; font-size: .9375rem;
+}
+.vorera {
+  display: flex; align-items: flex-start; gap: .75rem; margin: 0 0 1rem; padding: .75rem 1rem;
+  background: var(--blanc); border: 2px dashed var(--vora); border-radius: 16px;
+}
+.vorera p { margin: .25rem 0; }
+.vorera .sentit-etiqueta { margin: 0; }
+.vorera-num {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2.25rem; height: 2.25rem; border-radius: 1.125rem; background: var(--mar); color: var(--blanc); font: .875rem/1 var(--xifres);
+}
+.peu {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .75rem;
+  margin-top: 1rem; padding: .5rem 0 2rem; border-top: 1px solid var(--vora); font-size: .875rem;
+}
+.peu a, .enllac { display: inline-flex; align-items: center; min-height: 44px; }
+.enllac { padding: 0; border: 0; background: none; color: var(--mar); font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 
 /* Favorites, compartir i visualització */
 .accions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }

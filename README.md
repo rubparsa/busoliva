@@ -14,7 +14,9 @@ L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial,
 - **Avisos** amb data d'inici i de fi i bàner del servei temporal. La data de comprovació i l'enllaç a la font són en «Sobre l'app» i en els cartells.
 - **Tres idiomes**: valencià (per defecte), castellà i anglès. Es recorda l'idioma triat.
 - **Sense connexió**: funciona tot menys el mapa i avisa de la data de les dades desades. Avisa quan hi ha una versió nova i explica com instal·lar-la en iOS.
-- **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`) i modes d'**alt contrast**, **text gran** i **fosc** (per defecte segueix el del mòbil).
+- **Parada de l'altra vorera**: en les parades que tenen una germana a l'altra vorera (5/14, 6/13, 7/12), l'app la mostra amb el seu sentit i les parades següents.
+- **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`).
+- En la capçalera: **alt contrast**, **text gran**, **mode fosc** (per defecte segueix el del mòbil) i idioma. Al peu: «Sobre l'app», «Avisa d'un error» i «Instal·la l'app».
 
 ## Estructura
 
@@ -45,6 +47,7 @@ Totes les dades són en `data/`. La interfície no té cap hora ni cap parada es
 | `font.url`, `font.titol`, `font.data_avis` | Enllaç i dades de l'avís oficial. |
 | `durada_volta_minuts` | Durada aproximada de la volta completa (l'avís diu «aproximadament una hora»). |
 | `gratuit` | `true` si el servei és gratuït. |
+| `contacte` | Enllaç de «Avisa d'un error» (una adreça `mailto:…` o una web). Si és `null`, l'enllaç no ix. |
 
 ### Parades: `data/servei.json`, camp `parades`
 
@@ -112,6 +115,8 @@ Qualsevol servidor estàtic serveix, perquè totes les rutes són relatives. La 
 | `npm run carrers` | Genera la xarxa de carrers per a la distància a peu (`data/carrers.json`). |
 | `npm run qr` | Torna a generar els codis QR dels cartells (`URL_APP=https://…/ npm run qr` per a una altra adreça). |
 | `npm run vendor` | Torna a copiar Leaflet i les fonts des de `node_modules`. |
+
+Cada vegada que es puja un canvi a GitHub, els tests s'executen sols (pestanya **Actions**). Si ix una creu roja, alguna cosa s'ha trencat: per exemple, un JSON mal escrit.
 
 ## Com es publica (GitHub Pages)
 

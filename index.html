@@ -20,7 +20,11 @@
 <a class="salta" href="#contingut" data-i18n="app.salta"></a>
 <header class="capcalera">
   <div class="pagina capcalera-dins">
-    <p class="marca"><span data-i18n="app.titol"></span> <span class="marca-lloc">Oliva</span></p>
+    <a class="marca" href="#proper"><svg class="icona-bus" width="30" height="20" viewBox="40 130 432 270" aria-hidden="true" focusable="false"><rect x="60" y="150" width="392" height="200" rx="44" fill="currentColor"/><g fill="var(--cap-fons)"><rect x="96" y="182" width="78" height="72" rx="12"/><rect x="190" y="182" width="78" height="72" rx="12"/><rect x="284" y="182" width="78" height="72" rx="12"/><path d="M378 182h34a16 16 0 0 1 16 16v118h-50z"/></g><circle cx="150" cy="352" r="38" fill="currentColor"/><circle cx="150" cy="352" r="15" fill="var(--cap-fons)"/><circle cx="362" cy="352" r="38" fill="currentColor"/><circle cx="362" cy="352" r="15" fill="var(--cap-fons)"/></svg><span data-i18n="app.titol"></span> <span class="marca-lloc">Oliva</span></a>
+    <div class="eines-cap">
+      <button type="button" class="boto-icona" data-mode="contrast" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg><span class="vh" data-i18n="vis.contrast"></span></button>
+      <button type="button" class="boto-icona" data-mode="text" aria-pressed="false"><span class="icona-text" aria-hidden="true">A<span>A</span></span><span class="vh" data-i18n="vis.text"></span></button>
+      <button type="button" class="boto-icona" data-mode="fosc" aria-pressed="false"><svg class="icona-lluna" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg><svg class="icona-sol" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="vh" data-i18n="vis.fosc"></span></button>
     <div class="idiomes">
       <button type="button" id="idioma-boto" class="idioma-boto" aria-expanded="false" aria-controls="idioma-menu"><span class="vh" data-i18n="app.idioma"></span> <span id="idioma-actual"></span><svg class="caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="M0 0h10L5 6z" fill="currentColor"/></svg></button>
       <ul id="idioma-menu" class="idioma-menu" hidden>
@@ -28,6 +32,7 @@
         <li><button type="button" data-idioma="es" lang="es"><svg class="bandera" width="24" height="16" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/></svg><span>Español</span></button></li>
         <li><button type="button" data-idioma="en" lang="en"><svg class="bandera" width="24" height="16" viewBox="0 0 60 40" aria-hidden="true" focusable="false"><rect width="60" height="40" fill="#012169"/><path d="M0 0l60 40M60 0L0 40" stroke="#fff" stroke-width="8"/><path d="M0 0l60 40M60 0L0 40" stroke="#C8102E" stroke-width="3"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="12"/><path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="7"/></svg><span>English</span></button></li>
       </ul>
+    </div>
     </div>
   </div>
 </header>
@@ -50,7 +55,6 @@
       <li><a href="#horari" data-vista="horari" data-i18n="nav.horari"></a></li>
       <li><a href="#mapa" data-vista="mapa" data-i18n="nav.mapa"></a></li>
       <li><a href="#linia" data-vista="linia" data-i18n="nav.linia"></a></li>
-      <li><a href="#sobre" data-vista="sobre" data-i18n="nav.sobre"></a></li>
     </ul>
   </nav>
   <main id="contingut" tabindex="-1">
@@ -60,6 +64,8 @@
       <h1 id="t-proper" tabindex="-1" data-i18n="proper.titol"></h1>
       <div id="proper" class="targeta" tabindex="-1">
         <p id="proper-parada" class="proper-parada"></p>
+        <p id="proper-sentit" class="sentit-etiqueta" hidden></p>
+        <p id="proper-cami" class="nota" hidden></p>
         <p id="proper-falten" class="proper-falten"></p>
         <p id="proper-compte" class="proper-compte"></p>
         <p id="proper-hora" class="proper-hora"></p>
@@ -76,6 +82,15 @@
           <button type="button" id="boto-comparteix" class="boto" data-i18n="comparteix.boto"></button>
         </div>
         <p id="accions-estat" role="status"></p>
+      </div>
+      <div id="vorera" class="vorera" hidden>
+        <span id="vorera-num" class="vorera-num" aria-hidden="true"></span>
+        <div>
+          <p><strong id="vorera-titol"></strong> <span id="vorera-sentit" class="sentit-etiqueta"></span></p>
+          <p id="vorera-cami" class="nota"></p>
+          <p id="vorera-nota" class="nota"></p>
+          <button type="button" id="vorera-boto" class="boto"></button>
+        </div>
       </div>
       <section id="favorites" aria-labelledby="t-favorites" hidden>
         <h2 id="t-favorites" data-i18n="fav.titol"></h2>
@@ -141,12 +156,6 @@
       <p><span id="sobre-font"></span> <a id="sobre-enllac" rel="noopener"></a></p>
       <p data-i18n="sobre.estimades"></p>
       <p id="sobre-festius"></p>
-      <h2 data-i18n="vis.titol"></h2>
-      <div class="modes">
-        <button type="button" class="boto" data-mode="contrast" aria-pressed="false" data-i18n="vis.contrast"></button>
-        <button type="button" class="boto" data-mode="text" aria-pressed="false" data-i18n="vis.text"></button>
-        <button type="button" class="boto" data-mode="fosc" aria-pressed="false" data-i18n="vis.fosc"></button>
-      </div>
       <p><a href="cartells.html" data-i18n="cartells.enllac"></a></p>
       <h2 data-i18n="sobre.privTitol"></h2>
       <ul>
@@ -154,7 +163,7 @@
         <li data-i18n="sobre.priv2"></li>
         <li data-i18n="sobre.priv3"></li>
       </ul>
-      <h2 data-i18n="sobre.iosTitol"></h2>
+      <h2 id="installa-ios" tabindex="-1" data-i18n="sobre.iosTitol"></h2>
       <ol>
         <li data-i18n="sobre.ios1"></li>
         <li data-i18n="sobre.ios2"></li>
@@ -168,6 +177,11 @@
       </ul>
     </section>
   </main>
+  <footer class="peu">
+    <a href="#sobre" data-i18n="nav.sobre"></a>
+    <a id="avisa-error" rel="noopener" target="_blank" data-i18n="peu.error" hidden></a>
+    <button type="button" id="boto-installa" class="enllac" data-i18n="peu.installa"></button>
+  </footer>
 </div>
 <div id="anunci" class="vh" aria-live="polite"></div>
 <noscript><p class="pagina">Cal JavaScript · Hace falta JavaScript · JavaScript is required</p></noscript>

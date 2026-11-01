@@ -113,11 +113,54 @@ function tria(num, mouFocus) {
 }
 
 // ---------- Pròxim bus ----------
+// «7 Via de Ronda · 8 Plaça d’Europa · 9 Sector 5…»: les parades següents, amb el nom
+// fins al parèntesi.
+function seguentsParades(p) {
+  const ps = parades();
+  const resta = ps.slice(ps.indexOf(p) + 1);
+  const grups = [];
+  resta.slice(0, 3).forEach((q) => {
+    const curt = nom(q).split(' (')[0];
+    const darrer = grups[grups.length - 1];
+    if (darrer && darrer.nom === curt) darrer.nums.push(q.num);
+    else grups.push({ nom: curt, nums: [q.num] });
+  });
+  return grups.map((g) => g.nums.join(', ') + ' ' + g.nom).join(' · ') + (resta.length > 3 ? '…' : '');
+}
+
+// Parada de l'altra vorera: el mateix punt en sentit contrari (no l'eixida ni l'arribada).
+function altraVorera(p) {
+  const ps = parades();
+  return ps.filter((q, i) => q !== p && q.punt === p.punt && i !== 0 && i !== ps.length - 1)[0] || null;
+}
+
+function pintaVorera(p) {
+  const q = altraVorera(p);
+  $('#vorera').hidden = !q;
+  if (!q) return;
+  const ps = parades();
+  $('#vorera-num').textContent = q.num;
+  $('#vorera-titol').textContent = t('vorera.titol', { num: q.num });
+  $('#vorera-sentit').textContent = '→ ' + sentit(q);
+  $('#vorera-cami').textContent = t('proper.seguentsParades', { llista: seguentsParades(q) });
+  $('#vorera-nota').textContent = t(ps.indexOf(q) > ps.indexOf(p) ? 'vorera.mesAvant' : 'vorera.abans');
+  const boto = $('#vorera-boto');
+  boto.textContent = t('vorera.boto', { num: q.num });
+  boto.setAttribute('data-num', q.num);
+}
+
 function pintaProper(ara) {
   const p = paradaActual();
   const el = $('#proper-parada');
-  el.textContent = etiqueta(p);
+  el.textContent = t('proper.parada', { num: p.num }) + ' · ' + nom(p);
   el.setAttribute('data-num', p.num);
+  const s = sentit(p);
+  $('#proper-sentit').hidden = !s;
+  $('#proper-sentit').textContent = s ? (parades().indexOf(p) > 0 && parades().indexOf(p) < parades().length - 1 ? '→ ' : '') + s : '';
+  const cami = seguentsParades(p);
+  $('#proper-cami').hidden = !cami;
+  $('#proper-cami').textContent = cami ? t('proper.seguentsParades', { llista: cami }) : '';
+  pintaVorera(p);
   const nota = $('#proper-estimat');
   nota.hidden = !(p.estimat || senseHoraPas(p));
   if (senseHoraPas(p)) {
@@ -184,7 +227,7 @@ function pintaAPeu(p, primer, ara) {
   const min = S.minutsAPeu(d.metres);
   if (senseHoraPas(p)) {
     el.className = 'nota';
-    el.textContent = t('ubic.tardes', { min });
+    el.textContent = t('ubic.tardes', { min, dist: distancia(d.metres) });
   } else if (primer.ms - ara >= min * 60000) {
     el.className = 'nota';
     el.textContent = t('ubic.atemps', { min });
@@ -305,6 +348,20 @@ function aplicaModes() {
   document.documentElement.classList.toggle('fosc', fosc);
   document.documentElement.classList.toggle('clar', !fosc);
   $('[data-mode="fosc"]').setAttribute('aria-pressed', String(fosc));
+}
+
+// ---------- Instal·lació ----------
+let peticioInstal = null;
+const installada = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+// En Android s'usa el diàleg del navegador; si no n'hi ha (iPhone), les instruccions de «Sobre l'app».
+function installa() {
+  if (peticioInstal) {
+    peticioInstal.prompt();
+    peticioInstal = null;
+    return;
+  }
+  if (location.hash !== '#sobre') location.hash = '#sobre';
+  setTimeout(() => { const h = $('#installa-ios'); h.scrollIntoView(); h.focus(); }, 0);
 }
 
 // ---------- Selector i cerca ----------
@@ -432,6 +489,10 @@ function pintaComuns(ara) {
   const sv = estat.servei;
   const avui = S.diaMadrid(ara);
   $('#banner-gratuit').hidden = !sv.gratuit;
+  const error = $('#avisa-error');
+  error.hidden = !sv.contacte;
+  if (sv.contacte) error.href = sv.contacte;
+  $('#boto-installa').hidden = installada();
   $('#avisos').innerHTML = estat.avisos
     .filter((a) => a.inici <= avui && (!a.fi || a.fi >= avui))
     .map((a) => '<p class="avis-oficial">' + escapa(a.text[idioma()] || a.text.va) + '</p>').join('');
@@ -561,6 +622,11 @@ function inicia() {
   $('#anar-origen').addEventListener('change', () => pintaAnar(Date.now()));
   $('#anar-desti').addEventListener('change', () => pintaAnar(Date.now()));
   $('#horari-parada').addEventListener('change', () => pintaHorari(Date.now()));
+  // El títol de la capçalera torna sempre a «Pròxim bus».
+  $('.marca').addEventListener('click', () => { if (location.hash === '#proper') mostraVista('proper', true); });
+  $('#vorera-boto').addEventListener('click', (e) => tria(+e.currentTarget.getAttribute('data-num'), true));
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); peticioInstal = e; });
+  $('#boto-installa').addEventListener('click', installa);
   window.addEventListener('hashchange', () => {
     const v = location.hash.slice(1);
     if (VISTES.indexOf(v) >= 0) mostraVista(v, true);
