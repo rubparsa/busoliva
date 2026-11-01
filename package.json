@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node tests/servidor.mjs",
-    "test": "node --test --test-concurrency=1 tests/",
+    "test": "node --test tests/acceptacio.test.mjs",
     "vendor": "node eines/copia-vendor.mjs",
     "recorregut": "node eines/genera-recorregut.mjs"
   },

@@ -21,7 +21,10 @@ const TIPUS = {
 };
 
 export function iniciaServidor(port = 0) {
+  const comptador = { peticions: 0, bytes: 0, darrera: Date.now() };
   const servidor = createServer(async (req, res) => {
+    comptador.peticions += 1;
+    comptador.darrera = Date.now();
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname === '/' || url.pathname === '/busoliva') {
       res.writeHead(302, { Location: PREFIX });
@@ -43,6 +46,7 @@ export function iniciaServidor(port = 0) {
         return;
       }
       const cos = await readFile(fitxer);
+      comptador.bytes += cos.length;
       res.writeHead(200, capcaleres);
       res.end(cos);
     } catch (error) {
@@ -53,6 +57,7 @@ export function iniciaServidor(port = 0) {
   return new Promise((ok) => {
     servidor.listen(port, '127.0.0.1', () => ok({
       url: `http://127.0.0.1:${servidor.address().port}${PREFIX}`,
+      comptador,
       tanca: () => new Promise((tancat) => { servidor.closeAllConnections(); servidor.close(tancat); }),
     }));
   });

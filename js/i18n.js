@@ -92,6 +92,7 @@ export const TEXTOS = {
     'mapa.tria': 'Tria aquesta parada',
     'mapa.proper': 'Pròxim bus: {hora}',
     'mapa.veure': 'Veure el pròxim bus',
+    'mapa.grup': '{n} parades',
     'linia.titol': 'Diagrama de la línia',
     'linia.intro': 'Recorregut circular, en ordre. Funciona sense connexió.',
     'linia.minuts': '+{min} min aprox.',
@@ -206,6 +207,7 @@ export const TEXTOS = {
     'mapa.tria': 'Elige esta parada',
     'mapa.proper': 'Próximo autobús: {hora}',
     'mapa.veure': 'Ver el próximo autobús',
+    'mapa.grup': '{n} paradas',
     'linia.titol': 'Diagrama de la línea',
     'linia.intro': 'Recorrido circular, en orden. Funciona sin conexión.',
     'linia.minuts': '+{min} min aprox.',
@@ -320,6 +322,7 @@ export const TEXTOS = {
     'mapa.tria': 'Choose this stop',
     'mapa.proper': 'Next bus: {hora}',
     'mapa.veure': 'See the next bus',
+    'mapa.grup': '{n} stops',
     'linia.titol': 'Route diagram',
     'linia.intro': 'Circular route, in order. Works offline.',
     'linia.minuts': '+{min} min approx.',
@@ -363,8 +366,9 @@ export function idioma() {
 }
 
 // Si una clau no existeix es retorna tal qual, perquè els tests la detecten.
+// Si la frase acaba en «aprox.», el punt de l'abreviatura també tanca la frase.
 export function t(clau, valors) {
   const text = TEXTOS[actual][clau];
   if (text === undefined) return clau;
-  return valors ? text.replace(/\{(\w+)\}/g, (m, k) => (k in valors ? valors[k] : m)) : text;
+  return valors ? text.replace(/\{(\w+)\}/g, (m, k) => (k in valors ? valors[k] : m)).replace(/\.\.$/, '.') : text;
 }

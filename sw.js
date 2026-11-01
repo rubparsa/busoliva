@@ -6,7 +6,7 @@ const VERSIO = '1';
 const CAU_APP = 'busoliva-app-' + VERSIO;
 const CAU_DADES = 'busoliva-dades';
 const APP = [
-  './', 'index.html', 'css/app.css', 'manifest.webmanifest',
+  './', 'css/app.css', 'manifest.webmanifest',
   'js/app.js', 'js/i18n.js', 'js/servei.js', 'js/diagrama.js', 'js/mapa.js',
   'fonts/lexend-latin-400-normal.woff2', 'fonts/archivo-black-latin-400-normal.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(xarxaPrimer(ruta));
   } else if (request.mode === 'navigate') {
     if (ruta === '' || ruta === 'index.html') {
-      event.respondWith(caches.match('index.html').then((res) => res || fetch(request)));
+      event.respondWith(caches.match('./').then((res) => res || fetch(request)));
     }
   } else {
     event.respondWith(memoriaPrimer(request, ruta));
