@@ -1,4 +1,4 @@
-import { IDIOMES, DIES, TEXTOS, estableixIdioma, idioma, t } from './i18n.js';
+import { IDIOMES, DIES, estableixIdioma, idioma, idiomaInicial, t } from './i18n.js';
 import * as S from './servei.js';
 import { pintaDiagrama } from './diagrama.js';
 
@@ -97,6 +97,7 @@ function botoParada(p, detall) {
 function tria(num, mouFocus) {
   estat.parada = num;
   desa('parada', String(num));
+  $('#accions-estat').textContent = '';
   pintaLlista();
   if (mouFocus) {
     $('#triador').open = false;
@@ -218,6 +219,57 @@ function localitzaSiHiHaPermis() {
   }
 }
 
+// ---------- Favorites, compartir i visualització ----------
+const MAX_FAVORITES = 3;
+function favorites() {
+  try {
+    const llista = JSON.parse(llig('favorites') || '[]');
+    return Array.isArray(llista) ? llista.filter((n) => parada(n)) : [];
+  } catch (e) { return []; }
+}
+function commutaFavorita() {
+  const num = paradaActual().num;
+  const llista = favorites();
+  const i = llista.indexOf(num);
+  if (i >= 0) llista.splice(i, 1);
+  else if (llista.length >= MAX_FAVORITES) { $('#accions-estat').textContent = t('fav.maxim', { n: MAX_FAVORITES }); return; }
+  else llista.push(num);
+  desa('favorites', JSON.stringify(llista));
+  $('#accions-estat').textContent = '';
+  pinta();
+}
+function pintaFavorites(ara) {
+  const llista = favorites();
+  $('#boto-favorita').setAttribute('aria-pressed', String(llista.indexOf(paradaActual().num) >= 0));
+  $('#favorites').hidden = !llista.length;
+  $('#llista-favorites').innerHTML = llista.map((n) => {
+    const p = parada(n);
+    const r = S.finalitzat(estat.servei, ara) ? null : S.passades(estat.servei, estat.festius, p, ara, 1)[0];
+    return botoParada(p, r ? quanCurt(r.ms, p) : '');
+  }).join('');
+}
+function comparteix() {
+  const p = paradaActual();
+  const url = new URL('./?parada=' + p.num, location.href).href;
+  const avisa = (clau) => { $('#accions-estat').textContent = t(clau, { url }); };
+  if (navigator.share) {
+    navigator.share({ title: t('doc.titol'), text: etiqueta(p), url }).catch(() => {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => avisa('comparteix.copiat'), () => avisa('comparteix.enllac'));
+  } else {
+    avisa('comparteix.enllac');
+  }
+}
+const MODES = { contrast: 'alt-contrast', text: 'text-gran' };
+function aplicaModes() {
+  Object.keys(MODES).forEach((mode) => {
+    const actiu = llig(mode) === '1';
+    document.documentElement.classList.toggle(MODES[mode], actiu);
+    const boto = $('[data-mode="' + mode + '"]');
+    if (boto) boto.setAttribute('aria-pressed', String(actiu));
+  });
+}
+
 // ---------- Selector i cerca ----------
 const normalitza = (text) => text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[·.]/g, '');
 function pintaLlista() {
@@ -271,12 +323,6 @@ function pintaAnar(ara) {
 }
 
 // ---------- Horari ----------
-function sumaMinuts(hhmm, min) {
-  const total = +hhmm.split(':')[0] * 60 + +hhmm.split(':')[1] + min;
-  const h = Math.floor(total / 60) % 24;
-  const m = total % 60;
-  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-}
 function taula(tipus, p, seguent, hui) {
   const ambPas = aprox(p);
   const titol = t(tipus === 'laborables' ? 'horari.laborables' : 'horari.festius');
@@ -285,7 +331,7 @@ function taula(tipus, p, seguent, hui) {
     const dia = proxima ? quanDia(seguent.ms) : '';
     return '<tr' + (proxima ? ' class="proxima"' : '') + '><td>' + horaText(h) +
       (proxima ? ' <span class="etiqueta">' + escapa(t('horari.proxima') + (dia ? ', ' + dia : '')) + '</span>' : '') + '</td>' +
-      (ambPas ? '<td>' + horaText(sumaMinuts(h, p.minuts_des_de_eixida)) + ' ' + escapa(t('hora.aprox')) + '</td>' : '') + '</tr>';
+      (ambPas ? '<td>' + horaText(S.sumaMinuts(h, p.minuts_des_de_eixida)) + ' ' + escapa(t('hora.aprox')) + '</td>' : '') + '</tr>';
   }).join('');
   return '<table class="horari' + (hui ? ' hui' : '') + '" data-tipus="' + tipus + '"><caption>' + escapa(titol) +
     (hui ? ' <span class="etiqueta">' + escapa(t('dia.hui')) + '</span>' : '') + '</caption><thead><tr><th scope="col">' +
@@ -361,7 +407,7 @@ function pinta() {
   if (!estat.servei) return;
   const ara = Date.now();
   pintaComuns(ara);
-  if (estat.vista === 'proper') { pintaProper(ara); pintaProperes(); }
+  if (estat.vista === 'proper') { pintaProper(ara); pintaFavorites(ara); pintaProperes(); }
   if (estat.vista === 'anar') pintaAnar(ara);
   if (estat.vista === 'horari') pintaHorari(ara);
   if (estat.vista === 'mapa') pintaMapa();
@@ -391,21 +437,9 @@ function aplicaTextos() {
 function canviaIdioma(nou) {
   estableixIdioma(nou);
   desa('idioma', nou);
+  $('#accions-estat').textContent = '';
   aplicaTextos();
   if (estat.servei) { pintaLlista(); pinta(); }
-}
-
-function idiomaInicial() {
-  const desat = llig('idioma');
-  if (desat && TEXTOS[desat]) return desat;
-  const llista = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
-  for (let i = 0; i < llista.length; i++) {
-    const codi = String(llista[i]).toLowerCase();
-    if (codi.indexOf('ca') === 0 || codi.indexOf('va') === 0) return 'va';
-    if (codi.indexOf('es') === 0) return 'es';
-    if (codi.indexOf('en') === 0) return 'en';
-  }
-  return 'va';
 }
 
 // ---------- Dades ----------
@@ -453,6 +487,7 @@ function registraServiceWorker() {
 
 // ---------- Inici ----------
 function inicia() {
+  aplicaModes();
   estableixIdioma(idiomaInicial());
   aplicaTextos();
   document.addEventListener('click', (e) => {
@@ -460,8 +495,16 @@ function inicia() {
     if (boto) tria(+boto.getAttribute('data-num'), true);
     const idiomaBoto = e.target.closest ? e.target.closest('[data-idioma]') : null;
     if (idiomaBoto) canviaIdioma(idiomaBoto.getAttribute('data-idioma'));
+    const modeBoto = e.target.closest ? e.target.closest('[data-mode]') : null;
+    if (modeBoto) {
+      const mode = modeBoto.getAttribute('data-mode');
+      desa(mode, llig(mode) === '1' ? null : '1');
+      aplicaModes();
+    }
   });
   $('#boto-ubicacio').addEventListener('click', localitza);
+  $('#boto-favorita').addEventListener('click', commutaFavorita);
+  $('#boto-comparteix').addEventListener('click', comparteix);
   $('#cerca').addEventListener('input', filtra);
   $('#anar-origen').addEventListener('change', () => pintaAnar(Date.now()));
   $('#anar-desti').addEventListener('change', () => pintaAnar(Date.now()));
@@ -474,9 +517,18 @@ function inicia() {
   window.addEventListener('offline', pinta);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) pinta(); });
 
+  // Un enllaç compartit (?parada=N) mana sobre la parada desada i sobre la ubicació.
+  const compartida = +new URLSearchParams(location.search).get('parada');
   carregaDades().then(() => {
-    const desada = +llig('parada');
-    estat.parada = desada && parada(desada) && desada !== parades()[parades().length - 1].num ? desada : parades()[0].num;
+    const valida = (n) => n && parada(n) && n !== parades()[parades().length - 1].num;
+    if (valida(compartida)) {
+      estat.parada = compartida;
+      desa('parada', String(compartida));
+      history.replaceState(null, '', location.pathname + location.hash);
+    } else {
+      const desada = +llig('parada');
+      estat.parada = valida(desada) ? desada : parades()[0].num;
+    }
     pintaLlista();
     const v = location.hash.slice(1);
     mostraVista(VISTES.indexOf(v) >= 0 ? v : 'proper', false);
@@ -485,7 +537,7 @@ function inicia() {
       if (minut !== estat.minut) { estat.minut = minut; pinta(); }
     }, 1000);
     estat.minut = Math.floor(Date.now() / 60000);
-    localitzaSiHiHaPermis();
+    if (!valida(compartida)) localitzaSiHiHaPermis();
   }).catch(() => {
     $('#error-dades').hidden = false;
   });

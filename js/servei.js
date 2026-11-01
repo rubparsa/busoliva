@@ -81,6 +81,13 @@ export function eixides(servei, festius, ms) {
   return llista.sort((a, b) => a.ms - b.ms);
 }
 
+// «07:30» + 13 minuts → «07:43» (dins del mateix dia).
+export function sumaMinuts(hhmm, min) {
+  const total = Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5)) + min;
+  const h = Math.floor(total / 60) % 24;
+  return dos(h) + ':' + dos(total % 60);
+}
+
 export const pas = (eixida, parada) => eixida.ms + parada.minuts_des_de_eixida * MINUT;
 
 // Un bus compta com a pròxim fins que acaba el minut en què passa.

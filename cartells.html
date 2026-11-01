@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ca-ES-valencia">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartells de les parades · Bus poble ⇄ platja · Oliva</title>
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/app.css">
+<style>
+  .cartell {
+    max-width: 210mm; margin: 1rem auto; padding: 1.25rem;
+    background: var(--blanc); border: 1px solid var(--vora);
+  }
+  .cartell-cap { background: var(--ink); color: var(--sand); padding: .5rem .75rem; }
+  .cartell-cap p { margin: .125rem 0; }
+  .cartell-marca { font: 1.25rem/1.2 var(--xifres); }
+  .cartell-parada { display: flex; align-items: center; gap: .75rem; margin: 1rem 0 .25rem; font: clamp(1.25rem, 7vw, 1.75rem)/1.15 var(--xifres); }
+  .cartell-parada > span:last-child { min-width: 0; word-break: break-word; overflow-wrap: anywhere; }
+  .cartell-num {
+    flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+    min-width: 3.5rem; height: 3.5rem; border-radius: 1.75rem; background: var(--mar); color: var(--blanc);
+  }
+  .cartell-taules { display: grid; gap: 1rem; margin: 1rem 0; }
+  @media (min-width: 30rem) { .cartell-taules { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .cartell-qr { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 1rem 0; }
+  .cartell-qr img { width: 40mm; max-width: 45%; height: auto; }
+  .cartell-qr div { flex: 1 1 12rem; }
+  .cartell-url { font-size: .875rem; overflow-wrap: anywhere; }
+  .cartell-peu { font-size: .8125rem; border-top: 2px solid var(--ink); padding-top: .5rem; }
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    .no-imprimir { display: none !important; }
+    body { background: #fff; }
+    .pagina { max-width: none; padding: 0; }
+    .cartell { margin: 0; border: 0; padding: 0; break-after: page; page-break-after: always; }
+    .cartell-parada { font-size: 2.25rem; }
+    .cartell-num { min-width: 4.5rem; height: 4.5rem; border-radius: 2.25rem; }
+    .cartell-qr img { width: 45mm; }
+    .cartell-cap, .cartell-num { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+<script type="module" src="js/cartells.js"></script>
+</head>
+<body>
+<header class="capcalera no-imprimir">
+  <div class="pagina capcalera-dins">
+    <p class="marca"><span data-i18n="app.titol"></span> <span class="marca-lloc">Oliva</span></p>
+    <div class="idiomes" role="group" data-i18n-aria="app.idioma">
+      <button type="button" data-idioma="va" lang="ca-ES-valencia">VA<span class="vh"> Valencià</span></button>
+      <button type="button" data-idioma="es" lang="es">ES<span class="vh"> Castellano</span></button>
+      <button type="button" data-idioma="en" lang="en">EN<span class="vh"> English</span></button>
+    </div>
+  </div>
+</header>
+<main class="pagina">
+  <div class="no-imprimir">
+    <h1 data-i18n="cartells.titol"></h1>
+    <p data-i18n="cartells.intro"></p>
+    <p><a href="./" data-i18n="cartells.tornar"></a></p>
+    <label for="cartell-parada" data-i18n="cartells.parada"></label>
+    <select id="cartell-parada"></select>
+    <p><button type="button" id="imprimeix" class="boto boto-principal" data-i18n="cartells.imprimeix"></button></p>
+  </div>
+  <div id="cartells"></div>
+</main>
+</body>
+</html>

@@ -266,19 +266,42 @@ test('10. axe sense violacions serious/critical, sense desplaçament horitzontal
   const p8 = parada(8);
   for (const amplada of [360, 1280]) {
     const { context, page, errors } = await obri({ hora: madrid('2026-11-02', '09:00'), amplada, geolocation: { latitude: p8.lat + 0.002, longitude: p8.lon } });
-    await page.click('#boto-ubicacio');
-    await page.waitForSelector('#llista-properes li');
-    await page.click('#triador summary');
     const problemes = [];
-    for (const vista of VISTES) {
-      await vesA(page, vista);
-      if (vista === 'anar') await page.selectOption('#anar-desti', parada(1).punt);
+    const revisa = async (on) => {
       const resultat = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
       resultat.violations
         .filter((v) => v.impact === 'serious' || v.impact === 'critical')
-        .forEach((v) => problemes.push(`${amplada}px · ${vista} · ${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`));
+        .forEach((v) => problemes.push(`${amplada}px · ${on} · ${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`));
       const desborda = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-      if (desborda > 0) problemes.push(`${amplada}px · ${vista} · desplaçament horitzontal de ${desborda}px`);
+      if (desborda > 0) problemes.push(`${amplada}px · ${on} · desplaçament horitzontal de ${desborda}px`);
+    };
+    await page.click('#boto-ubicacio');
+    await page.waitForSelector('#llista-properes li');
+    await page.click('#boto-favorita');
+    await page.waitForSelector('#llista-favorites li');
+    await page.click('#triador summary');
+    for (const vista of VISTES) {
+      await vesA(page, vista);
+      if (vista === 'anar') await page.selectOption('#anar-desti', parada(1).punt);
+      await revisa(vista);
+    }
+    // Modes d'alt contrast i de text gran (P2)
+    await vesA(page, 'sobre');
+    await page.click('[data-mode="contrast"]');
+    await page.click('[data-mode="text"]');
+    for (const vista of ['proper', 'horari', 'sobre']) {
+      await vesA(page, vista);
+      await revisa(`${vista} (alt contrast i text gran)`);
+    }
+    // Cartells per a imprimir (P2)
+    for (const ruta of ['cartells.html?parada=8', 'cartells.html']) {
+      await page.goto(srv.url + ruta);
+      await page.waitForSelector('.cartell img');
+      const qr = await page.evaluate(() => Promise.all([...document.querySelectorAll('.cartell img')].map((img) => (img.complete
+        ? img.naturalWidth > 0
+        : new Promise((resol) => { img.onload = () => resol(true); img.onerror = () => resol(false); })))));
+      if (!qr.length || qr.includes(false)) problemes.push(`${amplada}px · ${ruta} · codis QR que no es carreguen`);
+      await revisa(ruta);
     }
     assert.deepEqual(problemes, []);
     assert.deepEqual(errors, [], 'errors de consola');

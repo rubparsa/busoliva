@@ -65,7 +65,19 @@
         <div id="proper-seguents" class="proper-seguents"></div>
         <p id="proper-estimat" class="nota" hidden data-i18n="proper.estimat"></p>
         <p class="nota" data-i18n="proper.noTempsReal"></p>
+        <div class="accions">
+          <button type="button" id="boto-favorita" class="boto" aria-pressed="false">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z"/></svg>
+            <span data-i18n="fav.boto"></span>
+          </button>
+          <button type="button" id="boto-comparteix" class="boto" data-i18n="comparteix.boto"></button>
+        </div>
+        <p id="accions-estat" role="status"></p>
       </div>
+      <section id="favorites" aria-labelledby="t-favorites" hidden>
+        <h2 id="t-favorites" data-i18n="fav.titol"></h2>
+        <ul id="llista-favorites" class="llista-parades"></ul>
+      </section>
       <button type="button" id="boto-ubicacio" class="boto boto-principal">
         <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
         <span data-i18n="ubic.boto"></span>
@@ -126,6 +138,12 @@
       <p><span id="sobre-font"></span> <a id="sobre-enllac" rel="noopener"></a></p>
       <p data-i18n="sobre.estimades"></p>
       <p id="sobre-festius"></p>
+      <h2 data-i18n="vis.titol"></h2>
+      <div class="modes">
+        <button type="button" class="boto" data-mode="contrast" aria-pressed="false" data-i18n="vis.contrast"></button>
+        <button type="button" class="boto" data-mode="text" aria-pressed="false" data-i18n="vis.text"></button>
+      </div>
+      <p><a href="cartells.html" data-i18n="cartells.enllac"></a></p>
       <h2 data-i18n="sobre.privTitol"></h2>
       <ul>
         <li data-i18n="sobre.priv1"></li>

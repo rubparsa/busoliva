@@ -107,7 +107,7 @@ export const TEXTOS = {
     'sobre.festius': "Els festius ixen del BOE i del DOGV (comprovats el {data}).",
     'sobre.privTitol': 'Privacitat',
     'sobre.priv1': "La ubicació es calcula en el teu mòbil i no s'envia enlloc.",
-    'sobre.priv2': "Sense comptes, sense cookies i sense analítica. En el mòbil només es desen l'idioma i la parada triada.",
+    'sobre.priv2': "Sense comptes, sense cookies i sense analítica. En el mòbil només es desen l'idioma, la parada triada, les favorites i les preferències de visualització.",
     'sobre.priv3': "El mapa descarrega les imatges de fons d'OpenStreetMap, que veu la teua adreça IP i la zona del mapa que mires, però no la teua ubicació.",
     'sobre.iosTitol': 'Instal·la-la en un iPhone o iPad',
     'sobre.ios1': 'Obri aquesta pàgina amb Safari.',
@@ -117,6 +117,26 @@ export const TEXTOS = {
     'sobre.osm': "Mapa: © col·laboradors d'OpenStreetMap, amb dades sota llicència ODbL.",
     'sobre.leaflet': 'Mapa interactiu fet amb Leaflet (llicència BSD-2).',
     'sobre.fonts': 'Tipografies Lexend i Archivo Black (llicència SIL OFL 1.1).',
+    'fav.boto': 'Parada favorita',
+    'fav.titol': 'Les teues parades favorites',
+    'fav.maxim': "Només pots tindre {n} parades favorites. Lleva'n una abans.",
+    'comparteix.boto': 'Comparteix la parada',
+    'comparteix.copiat': 'Enllaç copiat: {url}',
+    'comparteix.enllac': 'Enllaç de la parada: {url}',
+    'vis.titol': 'Visualització',
+    'vis.contrast': 'Alt contrast',
+    'vis.text': 'Text gran',
+    'cartells.enllac': 'Cartells per a imprimir (un per parada, amb codi QR)',
+    'cartells.titol': 'Cartells de les parades',
+    'cartells.intro': "Un cartell A4 per parada, amb l'horari i un codi QR que obri l'app en eixa parada.",
+    'cartells.parada': 'Parada',
+    'cartells.totes': 'Totes les parades',
+    'cartells.imprimeix': 'Imprimeix',
+    'cartells.pas': 'Pas per ací (aprox.)',
+    'cartells.qr': "Escaneja el codi per a vore el pròxim bus d'aquesta parada.",
+    'cartells.qrAlt': "Codi QR amb l'enllaç {url}",
+    'cartells.peu': 'App no oficial. Font: {titol} (oliva.es), publicat el {data} i comprovat el {comprovat}. Les hores de pas per les parades són aproximades.',
+    'cartells.tornar': "Torna a l'app",
     'pwa.nova': "Hi ha una versió nova de l'app.",
     'pwa.actualitza': 'Actualitza',
     'pwa.desades': 'Sense connexió: es mostren les dades desades el {data}.',
@@ -222,7 +242,7 @@ export const TEXTOS = {
     'sobre.festius': 'Los festivos salen del BOE y del DOGV (comprobados el {data}).',
     'sobre.privTitol': 'Privacidad',
     'sobre.priv1': 'La ubicación se calcula en tu móvil y no se envía a ninguna parte.',
-    'sobre.priv2': 'Sin cuentas, sin cookies y sin analítica. En el móvil solo se guardan el idioma y la parada elegida.',
+    'sobre.priv2': 'Sin cuentas, sin cookies y sin analítica. En el móvil solo se guardan el idioma, la parada elegida, las favoritas y las preferencias de visualización.',
     'sobre.priv3': 'El mapa descarga las imágenes de fondo de OpenStreetMap, que ve tu dirección IP y la zona del mapa que miras, pero no tu ubicación.',
     'sobre.iosTitol': 'Instálala en un iPhone o iPad',
     'sobre.ios1': 'Abre esta página con Safari.',
@@ -232,6 +252,26 @@ export const TEXTOS = {
     'sobre.osm': 'Mapa: © colaboradores de OpenStreetMap, con datos bajo licencia ODbL.',
     'sobre.leaflet': 'Mapa interactivo hecho con Leaflet (licencia BSD-2).',
     'sobre.fonts': 'Tipografías Lexend y Archivo Black (licencia SIL OFL 1.1).',
+    'fav.boto': 'Parada favorita',
+    'fav.titol': 'Tus paradas favoritas',
+    'fav.maxim': 'Solo puedes tener {n} paradas favoritas. Quita una antes.',
+    'comparteix.boto': 'Compartir la parada',
+    'comparteix.copiat': 'Enlace copiado: {url}',
+    'comparteix.enllac': 'Enlace de la parada: {url}',
+    'vis.titol': 'Visualización',
+    'vis.contrast': 'Alto contraste',
+    'vis.text': 'Texto grande',
+    'cartells.enllac': 'Carteles para imprimir (uno por parada, con código QR)',
+    'cartells.titol': 'Carteles de las paradas',
+    'cartells.intro': 'Un cartel A4 por parada, con el horario y un código QR que abre la app en esa parada.',
+    'cartells.parada': 'Parada',
+    'cartells.totes': 'Todas las paradas',
+    'cartells.imprimeix': 'Imprimir',
+    'cartells.pas': 'Paso por aquí (aprox.)',
+    'cartells.qr': 'Escanea el código para ver el próximo autobús de esta parada.',
+    'cartells.qrAlt': 'Código QR con el enlace {url}',
+    'cartells.peu': 'App no oficial. Fuente: {titol} (oliva.es), publicado el {data} y comprobado el {comprovat}. Las horas de paso por las paradas son aproximadas.',
+    'cartells.tornar': 'Volver a la app',
     'pwa.nova': 'Hay una versión nueva de la app.',
     'pwa.actualitza': 'Actualizar',
     'pwa.desades': 'Sin conexión: se muestran los datos guardados el {data}.',
@@ -337,7 +377,7 @@ export const TEXTOS = {
     'sobre.festius': 'Public holidays come from the BOE and the DOGV (checked on {data}).',
     'sobre.privTitol': 'Privacy',
     'sobre.priv1': 'Your location is worked out on your phone and is never sent anywhere.',
-    'sobre.priv2': 'No accounts, no cookies, no analytics. Only your language and chosen stop are stored on your phone.',
+    'sobre.priv2': 'No accounts, no cookies, no analytics. Only your language, chosen stop, favourites and display preferences are stored on your phone.',
     'sobre.priv3': 'The map downloads its background images from OpenStreetMap, which sees your IP address and the map area you view, but not your location.',
     'sobre.iosTitol': 'Install it on an iPhone or iPad',
     'sobre.ios1': 'Open this page in Safari.',
@@ -347,6 +387,26 @@ export const TEXTOS = {
     'sobre.osm': 'Map: © OpenStreetMap contributors, data under the ODbL licence.',
     'sobre.leaflet': 'Interactive map built with Leaflet (BSD-2 licence).',
     'sobre.fonts': 'Lexend and Archivo Black typefaces (SIL OFL 1.1 licence).',
+    'fav.boto': 'Favourite stop',
+    'fav.titol': 'Your favourite stops',
+    'fav.maxim': 'You can have up to {n} favourite stops. Remove one first.',
+    'comparteix.boto': 'Share this stop',
+    'comparteix.copiat': 'Link copied: {url}',
+    'comparteix.enllac': 'Link to this stop: {url}',
+    'vis.titol': 'Display',
+    'vis.contrast': 'High contrast',
+    'vis.text': 'Large text',
+    'cartells.enllac': 'Printable posters (one per stop, with a QR code)',
+    'cartells.titol': 'Stop posters',
+    'cartells.intro': 'One A4 poster per stop, with the timetable and a QR code that opens the app at that stop.',
+    'cartells.parada': 'Stop',
+    'cartells.totes': 'All stops',
+    'cartells.imprimeix': 'Print',
+    'cartells.pas': 'At this stop (approx.)',
+    'cartells.qr': 'Scan the code to see the next bus at this stop.',
+    'cartells.qrAlt': 'QR code with the link {url}',
+    'cartells.peu': 'Unofficial app. Source: {titol} (oliva.es), published on {data} and checked on {comprovat}. Times at the stops are approximate.',
+    'cartells.tornar': 'Back to the app',
     'pwa.nova': 'A new version of the app is available.',
     'pwa.actualitza': 'Update',
     'pwa.desades': 'Offline: showing data saved on {data}.',
@@ -356,6 +416,21 @@ export const TEXTOS = {
 };
 
 let actual = 'va';
+
+// Idioma desat; si no n'hi ha, el del navegador; si no és cap dels tres, valencià.
+export function idiomaInicial() {
+  let desat = null;
+  try { desat = localStorage.getItem('busoliva.idioma'); } catch (e) { /* sense emmagatzematge */ }
+  if (desat && TEXTOS[desat]) return desat;
+  const llista = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+  for (let i = 0; i < llista.length; i++) {
+    const codi = String(llista[i]).toLowerCase();
+    if (codi.indexOf('ca') === 0 || codi.indexOf('va') === 0) return 'va';
+    if (codi.indexOf('es') === 0) return 'es';
+    if (codi.indexOf('en') === 0) return 'en';
+  }
+  return 'va';
+}
 
 export function estableixIdioma(idioma) {
   actual = TEXTOS[idioma] ? idioma : 'va';

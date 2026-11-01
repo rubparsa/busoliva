@@ -142,6 +142,25 @@ input[type="search"], select {
 .proper-seguents ul { list-style: none; display: inline-flex; flex-wrap: wrap; gap: .25rem .75rem; margin: 0; padding: 0; }
 .proper-seguents li { font-weight: 700; }
 
+/* Favorites, compartir i visualització */
+.accions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+.accions .boto { flex: 1 1 auto; }
+#boto-favorita svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+#boto-favorita[aria-pressed="true"], .modes .boto[aria-pressed="true"] { background: var(--mar); color: var(--blanc); }
+#boto-favorita[aria-pressed="true"] svg { fill: currentColor; }
+.modes { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+html.text-gran { font-size: 125%; }
+html.alt-contrast {
+  --ink: #000; --sand: #fff; --mar: #002B66; --teal: #00534F;
+  --coral: #8A1C00; --coral-fosc: #8A1C00; --coral-clar: #fff; --vora: #000;
+}
+html.alt-contrast .targeta, html.alt-contrast .avis, html.alt-contrast .avis-oficial { border: 3px solid #000; }
+html.alt-contrast a { text-decoration-thickness: 2px; }
+html.alt-contrast .horari tr.proxima td { background: #000; color: #fff; }
+html.alt-contrast .horari tr.proxima .etiqueta { background: #fff; color: #000; }
+html.alt-contrast :focus { outline: 4px solid #FFD400; box-shadow: 0 0 0 7px #000; }
+
 /* Llistes de parades */
 .llista-parades { list-style: none; margin: .5rem 0; padding: 0; }
 .llista-parades li + li { margin-top: .375rem; }
