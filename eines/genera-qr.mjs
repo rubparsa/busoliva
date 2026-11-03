@@ -1,10 +1,10 @@
 // Genera els codis QR dels cartells (qr/parada-N.svg): un per parada, amb
 // l'enllaç a l'app en eixa parada (?parada=N). Es fan en local, sense cap servei extern.
-// Ús: npm run qr  ·  amb una altra adreça: URL_APP=https://exemple.org/busoliva/ npm run qr
+// Ús: npm run qr  ·  amb una altra adreça: URL_APP=https://exemple.org/ npm run qr
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import QRCode from 'qrcode';
 
-const base = process.env.URL_APP || 'https://rubparsa.github.io/busoliva/';
+const base = process.env.URL_APP || 'https://busoliva.es/';
 const servei = JSON.parse(readFileSync(new URL('../data/servei.json', import.meta.url), 'utf8'));
 mkdirSync(new URL('../qr/', import.meta.url), { recursive: true });
 for (const parada of servei.parades.slice(0, -1)) {

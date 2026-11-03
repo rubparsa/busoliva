@@ -109,7 +109,7 @@ Qualsevol servidor estàtic serveix, perquè totes les rutes són relatives. La 
 
 | Ordre | Què fa |
 |---|---|
-| `npm start` | Servidor local que serveix l'app sota `/busoliva/`, com GitHub Pages. |
+| `npm start` | Servidor local que serveix l'app sota `/busoliva/` (l'app funciona igual a l'arrel del domini, perquè totes les rutes són relatives). |
 | `npm test` | Els 11 tests d'acceptació (Playwright amb el rellotge fixat, zona Europe/Madrid i comprovacions d'accessibilitat amb axe) i la comprovació de pes de la primera càrrega (menys de 300 KB). |
 | `npm run recorregut` | Torna a generar el traçat del mapa a partir de les parades. |
 | `npm run carrers` | Genera la xarxa de carrers per a la distància a peu (`data/carrers.json`). |
@@ -118,13 +118,39 @@ Qualsevol servidor estàtic serveix, perquè totes les rutes són relatives. La 
 
 Cada vegada que es puja un canvi a GitHub, els tests s'executen sols (pestanya **Actions**). Si ix una creu roja, alguna cosa s'ha trencat: per exemple, un JSON mal escrit.
 
-## Com es publica (GitHub Pages)
+## Com es publica (GitHub Pages + busoliva.es)
 
-1. Pugeu el contingut del repositori a la branca `main` de `busoliva`.
+L'adreça de l'app és **<https://busoliva.es/>**. El domini és en Strato i el web el serveix GitHub Pages (gratuït, amb HTTPS). `www.busoliva.es` redirigeix a `busoliva.es`. El fitxer `CNAME` del repositori diu a GitHub quin és el domini: no l'esborreu.
+
+### 1. GitHub Pages
+
+1. Pugeu el contingut del repositori a la branca `main` de `busoliva` (el repositori ha de ser públic).
 2. En GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch**, branca `main`, carpeta `/ (root)`, i **Save**.
-3. Al cap d'uns minuts l'app és en <https://rubparsa.github.io/busoliva/>.
-4. Els codis QR apunten a eixa adreça. Si en feu servir una altra, executeu `URL_APP=https://la-vostra-adreça/ npm run qr` i torneu a publicar.
-5. Imprimiu els cartells des de l'adreça publicada: `https://rubparsa.github.io/busoliva/cartells.html` (o `cartells.html?parada=N` per a una sola parada).
+3. En la mateixa pàgina, **Custom domain**: `busoliva.es` i **Save** (si el `CNAME` ja és a `main`, hi apareix sol).
+4. Recomanat: en **Settings (del compte) → Pages → Add a domain**, verifiqueu `busoliva.es` (GitHub dona un registre TXT per a afegir en Strato). Així ningú més pot fer servir el domini en GitHub.
+
+### 2. DNS en Strato
+
+En Strato: **Domains → Gestionar domini → busoliva.es → Configuració DNS**. Si el domini té assignat un espai web de Strato, primer cal desvincular-lo perquè es puguen editar els registres A i CNAME.
+
+| Registre | Nom | Valor |
+|---|---|---|
+| A | `@` (busoliva.es) | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+| AAAA (opcional) | `@` | `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153` |
+| CNAME | `www` | `rubparsa.github.io` |
+
+Esborreu qualsevol altre registre A, AAAA o CNAME de `@` i `www` que hi haja. No toqueu els registres MX si feu servir el correu de Strato.
+
+### 3. HTTPS
+
+Quan el DNS s'haja propagat (de minuts a unes hores; GitHub ho mostra amb «DNS check successful»), marqueu **Enforce HTTPS** en **Settings → Pages**. El certificat pot tardar fins a una hora. La geolocalització i el service worker només funcionen amb `https`.
+
+### 4. Cartells
+
+Els codis QR ja apunten a `https://busoliva.es/?parada=N`. Si mai canvieu d'adreça, executeu `URL_APP=https://la-vostra-adreça/ npm run qr` i torneu a publicar. Imprimiu els cartells des de <https://busoliva.es/cartells.html> (o `cartells.html?parada=N` per a una sola parada), i només quan l'adreça ja funcione amb HTTPS: comproveu un QR amb el mòbil abans d'imprimir-los tots.
 
 Després de cada canvi, n'hi ha prou de tornar a pujar els fitxers a `main`. Recordeu canviar `VERSIO` en `sw.js` si heu tocat l'app.
 
