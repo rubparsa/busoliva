@@ -2,6 +2,7 @@
   "name": "busoliva",
   "version": "1.0.0",
   "private": true,
+  "license": "GPL-3.0-only",
   "description": "Servei especial d'autobús poble ⇄ platja d'Oliva (PWA no oficial)",
   "type": "module",
   "scripts": {

@@ -2,7 +2,7 @@
 // - Estructura de l'app: memòria cau prèvia (canvieu VERSIO quan publiqueu canvis en l'app).
 // - Dades (data/*): primer per xarxa; si no n'hi ha, la còpia desada, amb la data en què es va desar.
 // - Tessel·les del mapa i altres orígens: no es toquen (van directes a la xarxa).
-const VERSIO = '9';
+const VERSIO = '10';
 const CAU_APP = 'busoliva-app-' + VERSIO;
 const CAU_DADES = 'busoliva-dades';
 const APP = [

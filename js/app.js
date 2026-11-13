@@ -222,8 +222,8 @@ function anuncia(parts) {
 
 function pintaAPeu(p, primer, ara) {
   const el = $('#ubic-apeu');
-  if (!estat.ubicacio) { el.hidden = true; return; }
-  const d = estat.distancies.filter((x) => x.parada === p)[0];
+  if (!estat.ubicacio || estat.lluny) { el.hidden = true; return; }
+  const d =estat.distancies.filter((x) => x.parada === p)[0];
   const min = S.minutsAPeu(d.metres);
   if (senseHoraPas(p)) {
     el.className = 'nota';
@@ -242,13 +242,15 @@ function pintaAPeu(p, primer, ara) {
 
 function pintaProperes() {
   const caixa = $('#ubic-properes');
-  $('#ubic-estat').textContent = estat.ubicEstat ? t(estat.ubicEstat) : '';
-  if (!estat.ubicacio) { caixa.hidden = true; return; }
+  $('#ubic-estat').textContent = estat.ubicEstat ? t(estat.ubicEstat)
+    : estat.ubicacio && estat.lluny ? t('ubic.lluny', { dist: distancia(estat.lluny) }) : '';
+  if (!estat.ubicacio || estat.lluny) { caixa.hidden = true; return; }
   $('#llista-properes').innerHTML = S.properes(estat.distancies, 3, !!S.enCurs(estat.servei, estat.festius, Date.now())).map((r) =>
     botoParada(r.parada, t(r.aprox ? 'ubic.distanciaAprox' : 'ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
   caixa.hidden = false;
 }
 
+const LLUNY_METRES = 5000;
 function localitza() {
   if (!navigator.geolocation) { estat.ubicEstat = 'ubic.noDisponible'; pintaProperes(); return; }
   estat.ubicEstat = 'ubic.buscant';
@@ -260,6 +262,11 @@ function localitza() {
       estat.ubicacio = ubicacio;
       estat.distancies = S.distanciesAPeu(estat.servei, graf, ubicacio);
       estat.ubicEstat = '';
+      // Lluny d'Oliva (cap parada a menys de 5 km en línia recta) no es canvia la parada
+      // triada ni es donen minuts a peu: només es diu a quina distància és la més propera.
+      const recta = Math.min.apply(null, parades().slice(0, -1).map((p) => S.distancia(ubicacio, p)));
+      estat.lluny = recta > LLUNY_METRES ? recta : 0;
+      if (estat.lluny) { pinta(); return; }
       tria(S.properes(estat.distancies, 1, !!S.enCurs(estat.servei, estat.festius, Date.now()))[0].parada.num, false);
     });
   }, (error) => {
@@ -348,6 +355,9 @@ function aplicaModes() {
   document.documentElement.classList.toggle('fosc', fosc);
   document.documentElement.classList.toggle('clar', !fosc);
   $('[data-mode="fosc"]').setAttribute('aria-pressed', String(fosc));
+  // La barra del navegador segueix el mode triat en l'app, no només el del sistema.
+  const barra = llig('contrast') === '1' ? '#000000' : fosc ? '#08121C' : '#14324E';
+  $$('meta[name="theme-color"]').forEach((m) => { m.content = barra; });
 }
 
 // ---------- Instal·lació ----------
@@ -407,12 +417,14 @@ function pintaAnar(ara) {
   const v = S.viatge(estat.servei, estat.festius, vo, vd, ara);
   if (!v) { res.innerHTML = '<p>' + escapa(t('proper.capBus')) + '</p>'; return; }
   const ps = parades();
-  const lloc = (p) => { const s = sentit(p); return p.num + ' · ' + nom(p) + (s ? ', ' + s + ',' : ''); };
+  // Amb hores, el sentit va entre comes davant de l'hora; sense hores, tanca la frase.
+  const llocSol = (p) => { const s = sentit(p); return p.num + ' · ' + nom(p) + (s ? ', ' + s : ''); };
+  const lloc = (p) => llocSol(p) + (sentit(p) ? ',' : '');
   if (!v.ambHores) {
     res.innerHTML =
-      '<p class="anar-pas" id="anar-puja" data-num="' + v.origen.num + '">' + escapa(t('anar.pujaSenseHora', { parada: lloc(v.origen) })) + '</p>' +
+      '<p class="anar-pas" id="anar-puja" data-num="' + v.origen.num + '">' + escapa(t('anar.pujaSenseHora', { parada: llocSol(v.origen) })) + '</p>' +
       (v.volta ? '<p>' + escapa(t('anar.voltaSenseHora', { num: ps[ps.length - 1].num })) + '</p>' : '') +
-      '<p class="anar-pas" id="anar-arribada" data-num="' + v.desti.num + '">' + escapa(t('anar.baixaSenseHora', { parada: lloc(v.desti), n: v.parades })) + '</p>' +
+      '<p class="anar-pas" id="anar-arribada" data-num="' + v.desti.num + '">' + escapa(t(v.parades === 1 ? 'anar.baixaSenseHora1' : 'anar.baixaSenseHora', { parada: llocSol(v.desti), n: v.parades })) + '</p>' +
       (v.eixida ? '<p id="anar-eixida" data-hora="' + v.eixida.hora + '" data-data="' + v.eixida.data + '">' +
         escapa(t('anar.eixida', { hora: quan(v.eixida.ms, ps[0]), durada: durada(estat.servei.durada_volta_minuts) })) + '</p>' : '');
     return;
@@ -495,7 +507,7 @@ function pintaComuns(ara) {
   $('#boto-installa').hidden = installada();
   $('#avisos').innerHTML = estat.avisos
     .filter((a) => a.inici <= avui && (!a.fi || a.fi >= avui))
-    .map((a) => '<p class="avis-oficial">' + escapa(a.text[idioma()] || a.text.va) + '</p>').join('');
+    .map((a) => '<p class="avis-oficial">' + escapa(a.text[idioma()] || a.text.va || '') + '</p>').join('');
   const xarxa = $('#estat-xarxa');
   if (estat.desades) {
     xarxa.textContent = t('pwa.desades', { data: data(S.diaMadrid(estat.desades)) + ' ' + t('hora.ales', { hora: hora(estat.desades) }) });
@@ -568,11 +580,16 @@ function carregaDades() {
   const opcional = (ruta) => carrega(ruta).catch(() => null);
   return Promise.all([carrega('data/servei.json'), opcional('data/festius.json'), opcional('data/avisos.json')])
     .then((r) => {
-      estat.servei = r[0].json;
-      estat.festius = new Map(r[1] ? r[1].json.festius.map((f) => [f.data, f]) : []);
-      estat.festiusComprovat = r[1] ? r[1].json.comprovat : null;
-      estat.avisos = r[2] ? r[2].json.avisos : [];
+      const sv = r[0].json;
+      if (!sv || !Array.isArray(sv.parades) || sv.parades.length < 2 || !sv.eixides) throw new Error('servei.json');
+      // Els festius i els avisos són opcionals: si falten o estan mal escrits, l'app continua.
+      const llista = (x, camp) => (x && x.json && Array.isArray(x.json[camp]) ? x.json[camp] : []);
+      estat.servei = sv;
+      estat.festius = new Map(llista(r[1], 'festius').filter((f) => f && f.data && f.nom).map((f) => [f.data, f]));
+      estat.festiusComprovat = r[1] && r[1].json ? r[1].json.comprovat : null;
+      estat.avisos = llista(r[2], 'avisos').filter((a) => a && a.text && a.inici);
       estat.desades = r[0].desat;
+      estat.carregat = Date.now();
       $('#error-dades').hidden = true;
     });
 }
@@ -586,7 +603,12 @@ function registraServiceWorker() {
     const avisa = () => {
       if (!reg.waiting || !navigator.serviceWorker.controller) return;
       $('#nova-versio').hidden = false;
-      $('#boto-actualitza').onclick = () => { actualitzant = true; reg.waiting.postMessage('actualitza'); };
+      $('#boto-actualitza').onclick = () => {
+        // Si una altra pestanya ja ha activat la versió nova, n'hi ha prou de recarregar.
+        if (!reg.waiting) { location.reload(); return; }
+        actualitzant = true;
+        reg.waiting.postMessage('actualitza');
+      };
     };
     avisa();
     reg.addEventListener('updatefound', () => {
@@ -649,35 +671,58 @@ function inicia() {
     const v = location.hash.slice(1);
     if (VISTES.indexOf(v) >= 0) mostraVista(v, true);
   });
-  window.addEventListener('online', () => { carregaDades().then(pinta).catch(pinta); });
+  window.addEventListener('online', () => { $('#mapa-avis').hidden = true; refresca(true); });
   window.addEventListener('offline', pinta);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) pinta(); });
-
-  // Un enllaç compartit (?parada=N) mana sobre la parada desada i sobre la ubicació.
-  const compartida = +new URLSearchParams(location.search).get('parada');
-  carregaDades().then(() => {
-    const valida = (n) => n && parada(n) && n !== parades()[parades().length - 1].num;
-    if (valida(compartida)) {
-      estat.parada = compartida;
-      desa('parada', String(compartida));
-      history.replaceState(null, '', location.pathname + location.hash);
-    } else {
-      const desada = +llig('parada');
-      estat.parada = valida(desada) ? desada : parades()[0].num;
-    }
-    pintaLlista();
-    const v = location.hash.slice(1);
-    mostraVista(VISTES.indexOf(v) >= 0 ? v : 'proper', false);
-    setInterval(() => {
-      const minut = Math.floor(Date.now() / 60000);
-      if (minut !== estat.minut) { estat.minut = minut; pinta(); }
-    }, 1000);
-    estat.minut = Math.floor(Date.now() / 60000);
-    if (!valida(compartida)) localitzaSiHiHaPermis();
-  }).catch(() => {
-    $('#error-dades').hidden = false;
-  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { pinta(); refresca(false); } });
+  refresca(true);
   registraServiceWorker();
+}
+
+// Primera pintada, quan ja hi ha dades. Un enllaç compartit (?parada=N) mana sobre la
+// parada desada i sobre la ubicació.
+let arrancada = false;
+function arranca() {
+  arrancada = true;
+  const compartida = +new URLSearchParams(location.search).get('parada');
+  const valida = (n) => n && parada(n) && n !== parades()[parades().length - 1].num;
+  if (valida(compartida)) {
+    estat.parada = compartida;
+    desa('parada', String(compartida));
+    history.replaceState(null, '', location.pathname + location.hash);
+  } else {
+    const desada = +llig('parada');
+    estat.parada = valida(desada) ? desada : parades()[0].num;
+  }
+  pintaLlista();
+  const v = location.hash.slice(1);
+  mostraVista(VISTES.indexOf(v) >= 0 ? v : 'proper', false);
+  estat.minut = Math.floor(Date.now() / 60000);
+  setInterval(() => {
+    const minut = Math.floor(Date.now() / 60000);
+    if (minut !== estat.minut) { estat.minut = minut; pinta(); refresca(false); }
+  }, 1000);
+  if (!valida(compartida)) localitzaSiHiHaPermis();
+}
+
+// Torna a demanar les dades: en obrir, en recuperar la connexió i, amb l'app oberta,
+// cada 15 minuts (o en tornar-hi), perquè els avisos i els canvis d'horari arriben
+// sense haver de tancar-la. Si la primera càrrega va fallar, ací es recupera.
+const REFRESC = 15 * 60000;
+let carregant = false;
+function refresca(forca) {
+  if (carregant) return;
+  if (!forca) {
+    if (!navigator.onLine || document.hidden) return;
+    if (estat.servei && !estat.desades && Date.now() - estat.carregat < REFRESC) return;
+  }
+  carregant = true;
+  carregaDades().then(() => {
+    if (!arrancada) arranca();
+    else { pintaLlista(); pinta(); }
+  }).catch(() => {
+    if (!estat.servei) $('#error-dades').hidden = false;
+    else pinta();
+  }).then(() => { carregant = false; });
 }
 
 inicia();

@@ -113,7 +113,7 @@ function crea() {
   return fetch('data/recorregut.geojson').then((r) => r.json()).then((geo) => {
     L.geoJSON(geo, { style: { color: '#0D8F8C', weight: 5, opacity: 0.9 }, interactive: false }).addTo(mapa).bringToBack();
     ctx.rectes(geo.features[0].properties.origen !== 'osrm');
-  });
+  }).catch(() => { /* sense traçat: el mapa i les parades es mostren igualment */ });
 }
 
 function actualitza() {
