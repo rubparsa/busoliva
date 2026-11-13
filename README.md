@@ -23,6 +23,7 @@ L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial,
 ```
 index.html             l'app
 cartells.html          cartells A4 per a imprimir, un per parada
+404.html               pàgina d'adreça no trobada
 css/  js/              estil i codi (mòduls ES, sense framework ni compilació)
 data/                  totes les dades del servei (JSON)
 fonts/  vendor/        Lexend, Archivo Black i Leaflet, copiats al repositori
@@ -91,7 +92,7 @@ Cada avís té `id`, `inici` i `fi` (`"AAAA-MM-DD"`; `fi` pot ser `null`) i `tex
 
 ### Quan cal tocar `sw.js`
 
-- Si només canvien dades (`data/*.json`), **no cal**: l'app les demana primer a la xarxa.
+- Si només canvien dades (`data/*.json`), **no cal**: l'app les demana primer a la xarxa, en obrir-la i, mentre està oberta, cada 15 minuts.
 - Si canvia l'app (HTML, CSS, JS, icones o fonts), canvieu `VERSIO` en `sw.js` (per exemple, de `'1'` a `'2'`). Els mòbils que ja tenen l'app mostraran «Hi ha una versió nova de l'app» i el botó «Actualitza».
 
 ## Com es prova en local
