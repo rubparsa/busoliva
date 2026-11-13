@@ -1,5 +1,7 @@
-# Passa els tests d'acceptació cada vegada que es puja un canvi (per exemple, en un JSON).
-name: Tests
+# Passa els tests d'acceptació cada vegada que es puja un canvi (per exemple, en un JSON)
+# i, si passen i el canvi és en main, publica l'app en GitHub Pages.
+# Cal que en Settings → Pages l'origen (Source) siga «GitHub Actions».
+name: Tests i publicació
 on:
   push:
   pull_request:
@@ -15,3 +17,30 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm test
+
+  publica:
+    needs: tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.desplega.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      # Es publica el mateix que abans (tot el repositori), sense tests ni fitxers de Node.
+      - run: |
+          mkdir _site
+          git archive HEAD | tar -x -C _site --exclude=.github --exclude=tests \
+            --exclude='package*.json' --exclude=.gitignore
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: desplega
+        uses: actions/deploy-pages@v4

@@ -111,7 +111,7 @@ Qualsevol servidor estàtic serveix, perquè totes les rutes són relatives. La 
 | Ordre | Què fa |
 |---|---|
 | `npm start` | Servidor local que serveix l'app sota `/busoliva/` (l'app funciona igual a l'arrel del domini, perquè totes les rutes són relatives). |
-| `npm test` | Els 11 tests d'acceptació (Playwright amb el rellotge fixat, zona Europe/Madrid i comprovacions d'accessibilitat amb axe) i la comprovació de pes de la primera càrrega (menys de 300 KB). |
+| `npm test` | Els tests d'acceptació (Playwright amb el rellotge fixat, zona Europe/Madrid i comprovacions d'accessibilitat amb axe) i la comprovació de pes de la primera càrrega (menys de 300 KB). |
 | `npm run recorregut` | Torna a generar el traçat del mapa a partir de les parades. |
 | `npm run carrers` | Genera la xarxa de carrers per a la distància a peu (`data/carrers.json`). |
 | `npm run qr` | Torna a generar els codis QR dels cartells (`URL_APP=https://…/ npm run qr` per a una altra adreça). |
@@ -121,7 +121,7 @@ Cada vegada que es puja un canvi a GitHub, els tests s'executen sols (pestanya *
 
 ## Publicació
 
-L'app és en <https://busoliva.es/>. Es publica sola cada vegada que es puja un canvi a `main`. Si heu tocat l'app, recordeu canviar `VERSIO` en `sw.js`. Els cartells s'imprimeixen des de <https://busoliva.es/cartells.html> (o `cartells.html?parada=N` per a una sola parada).
+L'app és en <https://busoliva.es/>. Es publica sola cada vegada que es puja un canvi a `main`, però només si els tests passen: si ix una creu roja en **Actions**, la web es queda com estava. Perquè funcione, en *Settings → Pages* l'origen (*Source*) ha de ser «GitHub Actions». Si heu tocat l'app, recordeu canviar `VERSIO` en `sw.js`. Els cartells s'imprimeixen des de <https://busoliva.es/cartells.html> (o `cartells.html?parada=N` per a una sola parada).
 
 ## Dades pendents de confirmar
 
@@ -139,3 +139,7 @@ La ubicació es calcula en el mòbil i no s'envia enlloc. No hi ha comptes, ni c
 - Mapa: © col·laboradors d'[OpenStreetMap](https://www.openstreetmap.org/copyright) (dades sota llicència ODbL).
 - [Leaflet](https://leafletjs.com/) (llicència BSD-2, `vendor/leaflet/LICENSE`).
 - Tipografies Lexend i Archivo Black (llicència SIL OFL 1.1, `fonts/`).
+
+## Llicència
+
+[GPL-3.0](LICENSE). Les dades del mapa, Leaflet i les tipografies tenen la seua pròpia llicència (vegeu «Crèdits»).

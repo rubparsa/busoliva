@@ -222,8 +222,8 @@ function anuncia(parts) {
 
 function pintaAPeu(p, primer, ara) {
   const el = $('#ubic-apeu');
-  if (!estat.ubicacio) { el.hidden = true; return; }
-  const d = estat.distancies.filter((x) => x.parada === p)[0];
+  if (!estat.ubicacio || estat.lluny) { el.hidden = true; return; }
+  const d =estat.distancies.filter((x) => x.parada === p)[0];
   const min = S.minutsAPeu(d.metres);
   if (senseHoraPas(p)) {
     el.className = 'nota';
@@ -242,13 +242,15 @@ function pintaAPeu(p, primer, ara) {
 
 function pintaProperes() {
   const caixa = $('#ubic-properes');
-  $('#ubic-estat').textContent = estat.ubicEstat ? t(estat.ubicEstat) : '';
-  if (!estat.ubicacio) { caixa.hidden = true; return; }
+  $('#ubic-estat').textContent = estat.ubicEstat ? t(estat.ubicEstat)
+    : estat.ubicacio && estat.lluny ? t('ubic.lluny', { dist: distancia(estat.lluny) }) : '';
+  if (!estat.ubicacio || estat.lluny) { caixa.hidden = true; return; }
   $('#llista-properes').innerHTML = S.properes(estat.distancies, 3, !!S.enCurs(estat.servei, estat.festius, Date.now())).map((r) =>
     botoParada(r.parada, t(r.aprox ? 'ubic.distanciaAprox' : 'ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
   caixa.hidden = false;
 }
 
+const LLUNY_METRES = 5000;
 function localitza() {
   if (!navigator.geolocation) { estat.ubicEstat = 'ubic.noDisponible'; pintaProperes(); return; }
   estat.ubicEstat = 'ubic.buscant';
@@ -260,6 +262,11 @@ function localitza() {
       estat.ubicacio = ubicacio;
       estat.distancies = S.distanciesAPeu(estat.servei, graf, ubicacio);
       estat.ubicEstat = '';
+      // Lluny d'Oliva (cap parada a menys de 5 km en línia recta) no es canvia la parada
+      // triada ni es donen minuts a peu: només es diu a quina distància és la més propera.
+      const recta = Math.min.apply(null, parades().slice(0, -1).map((p) => S.distancia(ubicacio, p)));
+      estat.lluny = recta > LLUNY_METRES ? recta : 0;
+      if (estat.lluny) { pinta(); return; }
       tria(S.properes(estat.distancies, 1, !!S.enCurs(estat.servei, estat.festius, Date.now()))[0].parada.num, false);
     });
   }, (error) => {

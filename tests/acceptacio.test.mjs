@@ -204,6 +204,26 @@ test('6. Geolocalització en les coordenades de la parada 8 → la més propera 
   await segon.context.close();
 });
 
+test('6b. Geolocalització lluny d\'Oliva (València) → no canvia la parada triada ni dona minuts a peu', async () => {
+  const { context, page } = await obri({
+    hora: madrid('2026-11-02', '09:00'),
+    geolocation: { latitude: 39.4699, longitude: -0.3763 },
+    abans: (c) => c.addInitScript(() => localStorage.setItem('busoliva.parada', '5')),
+  });
+  await page.click('#boto-ubicacio');
+  await page.waitForFunction(() => /km/.test(document.querySelector('#ubic-estat').textContent));
+  const r = await page.evaluate(() => ({
+    triada: document.querySelector('#proper-parada').dataset.num,
+    estat: document.querySelector('#ubic-estat').textContent,
+    properes: document.querySelector('#ubic-properes').hidden,
+    apeu: document.querySelector('#ubic-apeu').hidden,
+  }));
+  assert.equal(r.triada, '5');
+  assert.match(r.estat, /^La parada més propera és a \d+,\d km\. Tria la parada a mà\.$/);
+  assert.ok(r.properes && r.apeu, 'ni parades més properes ni minuts a peu');
+  await context.close();
+});
+
 test('7. De la parada 9 a la parada 1 → arribada aproximada segons els minuts de servei.json', async () => {
   const origen = parada(9);
   const desti = parada(1);
