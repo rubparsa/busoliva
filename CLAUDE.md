@@ -17,7 +17,8 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 - **`data/festius.json`** recull festius nacionals i autonòmics de 2026 i 2027. Els locals d’Oliva de 2026 són el 17 de juliol i el 8 de setembre. El 7 de desembre de 2026 es tracta com a dia laborable.
 - **`data/avisos.json`** està buit a petició de l’usuari. L’enllaç «Avisa d’un error» usa el `mailto:` configurat en `servei.json`.
 - **`data/recorregut.geojson`** conté el traçat calculat amb OSRM. L’app llig el fitxer local i mostra el mapa amb Leaflet i OpenStreetMap.
-- **`data/carrers.json`** encara està buit. Mentrestant, la distància a peu es calcula en línia recta, multiplicada per 1,3, i es marca com a aproximada.
+- **`data/carrers.json`** conté la xarxa de carrers d’OpenStreetMap, generada amb `npm run carrers`. L’app hi calcula la distància a peu. Si el fitxer estiguera buit, usaria la línia recta multiplicada per 1,3 i la marcaria com a aproximada.
+- Les coordenades de les 20 parades estan verificades per l’usuari. La 11 no coincideix amb el GTFS d’estiu: és correcta així.
 
 ## Comportament de l’app
 
@@ -50,13 +51,11 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 - `npm start` serveix l’app en <http://localhost:8080/busoliva/>.
 - `npm test` executa les proves d’acceptació amb `node:test`, Playwright i axe, i comprova que la primera càrrega ocupa menys de 300 KB.
 - La versió de Playwright està fixada en `package.json`. Si l’entorn ja té un Chromium compatible, usa’l. Si cal instal·lar-lo, seguix els passos del `README.md`.
-- En entorns amb servidor intermediari, els scripts que fan peticions de xarxa poden necessitar `NODE_USE_ENV_PROXY=1`. En l’entorn on es va provar, OSRM responia i Overpass tallava la connexió.
+- En entorns amb servidor intermediari, els scripts que fan peticions de xarxa poden necessitar `NODE_USE_ENV_PROXY=1`. Overpass respon 406 si la petició porta el `User-Agent` per defecte de Node; per això `eines/genera-carrers.mjs` n’envia un de propi.
 - El workflow **Tests i publicació** executa les proves en cada *push* i *pull request*. El treball `publica` només s’executa en un *push* a `main` si passa `tests`. L’origen de Pages ha de ser **GitHub Actions**.
 
 ## Pendent
 
-- Verificar les coordenades de les parades amb l’editor, especialment les de la 15 i la 18, que són provisionals.
-- Generar `data/carrers.json` amb `npm run carrers` des d’un entorn amb accés a Overpass.
 - Incorporar els festius locals d’Oliva de 2027 quan es confirmen.
 - Les rutes en transport públic des d’Oliva fins a Gandia, l’hospital o València estan aparcades.
 

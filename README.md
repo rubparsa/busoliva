@@ -73,7 +73,7 @@ Per a corregir coordenades i minuts, useu l'**editor de parades**:
 
 ### Xarxa de carrers: `data/carrers.json`
 
-Serveix per a calcular en el mòbil la distància a peu pel carrer fins a cada parada. Es genera a partir d'OpenStreetMap amb `npm run carrers` (cal connexió). Torneu a generar-la si canvien les parades de lloc o si es tallen o s'obrin carrers. Mentre estiga buida (com ara), l'app fa servir la línia recta multiplicada per 1,3 i ho marca com a aproximat. Només es descarrega quan es toca «Troba la parada més propera».
+Serveix per a calcular en el mòbil la distància a peu pel carrer fins a cada parada. Es genera a partir d'OpenStreetMap amb `npm run carrers` (cal connexió). Torneu a generar-la si canvien les parades de lloc o si es tallen o s'obrin carrers. Si estiguera buida, l'app faria servir la línia recta multiplicada per 1,3 i ho marca com a aproximat. Només es descarrega quan es toca «Troba la parada més propera».
 
 ### Festius: `data/festius.json`
 
@@ -125,10 +125,8 @@ L'app és en <https://busoliva.es/>. Es publica sola cada vegada que es puja un 
 
 ## Dades pendents de confirmar
 
-- **Coordenades** de les parades: són les candidates del servei d'estiu. Les de les parades 15 i 18 són provisionals.
 - **Hores de pas** per les parades intermèdies: l'avís no les dona.
 - **Festius**: els nacionals i autonòmics s'han de contrastar amb el text del BOE i del DOGV. Falten els locals de 2027.
-- **Xarxa de carrers**: buida fins que s'execute `npm run carrers` amb connexió.
 
 ## Privacitat
 
