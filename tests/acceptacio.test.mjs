@@ -169,7 +169,12 @@ test('5. Zona America/New_York, dilluns a les 12:00 de Madrid, parada 1 → 12.3
 
 test('6. Geolocalització en les coordenades de la parada 8 → la més propera és la 8', async () => {
   const p8 = parada(8);
-  const { context, page } = await obri({ hora: madrid('2026-11-02', '09:00'), geolocation: { latitude: p8.lat, longitude: p8.lon } });
+  // Primer, amb data/carrers.json buit, per a provar la línia recta corregida.
+  const { context, page } = await obri({
+    hora: madrid('2026-11-02', '09:00'),
+    geolocation: { latitude: p8.lat, longitude: p8.lon },
+    abans: (context) => context.route('**/data/carrers.json', (ruta) => ruta.fulfill({ json: { nodes: [], arestes: [] } })),
+  });
   await page.click('#boto-ubicacio');
   await page.waitForSelector('#llista-properes li');
   const r = await page.evaluate(() => ({
@@ -180,7 +185,7 @@ test('6. Geolocalització en les coordenades de la parada 8 → la més propera 
   assert.equal(r.triada, '8');
   assert.equal(r.properes[0], '8');
   assert.equal(r.properes.length, 3, 'la més propera i 2 alternatives');
-  // Sense xarxa de carrers (data/carrers.json buit): línia recta corregida i marcada com a aproximada.
+  // Sense xarxa de carrers: línia recta corregida i marcada com a aproximada.
   assert.match(r.detall, /^0 m · uns 0 min a peu \(aprox\.\)$/);
   await context.close();
 

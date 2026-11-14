@@ -56,8 +56,8 @@
         "va": "Passeig de Lluís Vives (parada de taxis)",
         "es": "Paseo de Lluís Vives (parada de taxis)"
       },
-      "lat": 38.921137,
-      "lon": -0.1172105,
+      "lat": 38.9212340402,
+      "lon": -0.1171784746,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -68,8 +68,8 @@
         "va": "Passeig de Francisco Brines (CEIP Hort de Palau)",
         "es": "Paseo de Francisco Brines (CEIP Huerto de Palau)"
       },
-      "lat": 38.9206735,
-      "lon": -0.1128734,
+      "lat": 38.9208492306,
+      "lon": -0.1132125583,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -80,8 +80,8 @@
         "va": "Passeig de Francisco Brines (CEIP Sant Josep de la Muntanya)",
         "es": "Paseo de Francisco Brines (CEIP Sant Josep de la Montaña)"
       },
-      "lat": 38.9247897,
-      "lon": -0.1070542,
+      "lat": 38.9246239,
+      "lon": -0.1073447,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -92,8 +92,8 @@
         "va": "Via de Ronda (primera parada)",
         "es": "Vía de Ronda (primera parada)"
       },
-      "lat": 38.9265252,
-      "lon": -0.0943053,
+      "lat": 38.9267419,
+      "lon": -0.0944647,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -104,8 +104,8 @@
         "va": "Via de Ronda (altura del camí de les Canyades)",
         "es": "Vía de Ronda (altura del camino de las Cañadas)"
       },
-      "lat": 38.9252233,
-      "lon": -0.0919995,
+      "lat": 38.9252499,
+      "lon": -0.0918791,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -116,8 +116,8 @@
         "va": "Via de Ronda (altura del carrer de l’Illa de Xipre)",
         "es": "Vía de Ronda (altura de la calle de la Isla de Chipre)"
       },
-      "lat": 38.9232878,
-      "lon": -0.089995,
+      "lat": 38.9233594,
+      "lon": -0.0898996,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -128,8 +128,8 @@
         "va": "Plaça d’Europa",
         "es": "Plaza de Europa"
       },
-      "lat": 38.9219252,
-      "lon": -0.0861289,
+      "lat": 38.922206633,
+      "lon": -0.086133277,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -140,8 +140,8 @@
         "va": "Sector 5 (carrer d’Ozieri)",
         "es": "Sector 5 (calle de Ozieri)"
       },
-      "lat": 38.9160349,
-      "lon": -0.0798671,
+      "lat": 38.9162015,
+      "lon": -0.0798118,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -152,8 +152,8 @@
         "va": "Sector 5 (carrer de Nàpols)",
         "es": "Sector 5 (calle de Nápoles)"
       },
-      "lat": 38.9178328,
-      "lon": -0.0833813,
+      "lat": 38.9185889,
+      "lon": -0.0825691,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -164,8 +164,8 @@
         "va": "Carrer de la Comarca de la Marina (altura del pont)",
         "es": "Calle de la Comarca de la Marina (altura del puente)"
       },
-      "lat": 38.9192114,
-      "lon": -0.0846409,
+      "lat": 38.9215103,
+      "lon": -0.0885397,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -176,8 +176,8 @@
         "va": "Via de Ronda (altura del carrer de l’Illa de Xipre)",
         "es": "Vía de Ronda (altura de la calle de la Isla de Chipre)"
       },
-      "lat": 38.9232878,
-      "lon": -0.089995,
+      "lat": 38.9231069,
+      "lon": -0.0894544,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -188,8 +188,8 @@
         "va": "Via de Ronda (altura del camí de les Canyades)",
         "es": "Vía de Ronda (altura del camino de las Cañadas)"
       },
-      "lat": 38.9252233,
-      "lon": -0.0919995,
+      "lat": 38.9259364,
+      "lon": -0.0925711,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -200,8 +200,8 @@
         "va": "Via de Ronda (primera parada)",
         "es": "Vía de Ronda (primera parada)"
       },
-      "lat": 38.9265252,
-      "lon": -0.0943053,
+      "lat": 38.926925999,
+      "lon": -0.094611,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -212,8 +212,8 @@
         "va": "Avinguda dels Llauradors (junt al Club Nàutic)",
         "es": "Avenida de los Labradores (junto al Club Náutico)"
       },
-      "lat": 38.9294189,
-      "lon": -0.0949366,
+      "lat": 38.929427999,
+      "lon": -0.094985,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -224,8 +224,8 @@
         "va": "Avinguda dels Llauradors (altura del carrer de l’Assagador de Carro)",
         "es": "Avenida de los Labradores (altura de la calle del Azagador de Carro)"
       },
-      "lat": 38.9336409,
-      "lon": -0.1026261,
+      "lat": 38.9317433,
+      "lon": -0.0990647,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -236,8 +236,8 @@
         "va": "Avinguda de Francisco Brines (passat el camí del Pont de Bolo)",
         "es": "Avenida de Francisco Brines (pasado el camino del Pont de Bolo)"
       },
-      "lat": 38.9248187,
-      "lon": -0.107704,
+      "lat": 38.9248096,
+      "lon": -0.1075459,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -248,8 +248,8 @@
         "va": "Avinguda de Francisco Brines (Poliesportiu)",
         "es": "Avenida de Francisco Brines (Polideportivo)"
       },
-      "lat": 38.9239902,
-      "lon": -0.1113179,
+      "lat": 38.9221491,
+      "lon": -0.1114887,
       "minuts_des_de_eixida": null,
       "estimat": false
     },
@@ -260,8 +260,8 @@
         "va": "Avinguda de Sisteron (IES Gregori Maians)",
         "es": "Avenida de Sisteron (IES Gregori Maians)"
       },
-      "lat": 38.9231616,
-      "lon": -0.1149318,
+      "lat": 38.9226269,
+      "lon": -0.1151875,
       "minuts_des_de_eixida": null,
       "estimat": false
     },

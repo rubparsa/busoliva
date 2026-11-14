@@ -17,7 +17,8 @@ out skel qt;`;
 
 const resposta = await fetch('https://overpass-api.de/api/interpreter', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  // Overpass rebutja (406) el User-Agent genèric de Node.
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'genera-carrers/1.0' },
   body: 'data=' + encodeURIComponent(consulta),
 });
 if (!resposta.ok) throw new Error(`Overpass ha respost ${resposta.status}`);
