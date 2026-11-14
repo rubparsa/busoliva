@@ -10,6 +10,7 @@ const escapa = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;'
 const estat = {
   servei: null, festius: new Map(), avisos: [],
   parada: null, ubicacio: null, ubicEstat: '', desades: null,
+  grafCarrers: null,
   vista: 'proper', minut: -1, anunci: '', mapa: null,
 };
 
@@ -223,7 +224,7 @@ function anuncia(parts) {
 function pintaAPeu(p, primer, ara) {
   const el = $('#ubic-apeu');
   if (!estat.ubicacio || estat.lluny) { el.hidden = true; return; }
-  const d =estat.distancies.filter((x) => x.parada === p)[0];
+  const d = estat.distancies.find((x) => x.num === p.num);
   const min = S.minutsAPeu(d.metres);
   if (senseHoraPas(p)) {
     el.className = 'nota';
@@ -246,11 +247,18 @@ function pintaProperes() {
     : estat.ubicacio && estat.lluny ? t('ubic.lluny', { dist: distancia(estat.lluny) }) : '';
   if (!estat.ubicacio || estat.lluny) { caixa.hidden = true; return; }
   $('#llista-properes').innerHTML = S.properes(estat.distancies, 3, !!S.enCurs(estat.servei, estat.festius, Date.now())).map((r) =>
-    botoParada(r.parada, t(r.aprox ? 'ubic.distanciaAprox' : 'ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
+    botoParada(parada(r.num), t(r.aprox ? 'ubic.distanciaAprox' : 'ubic.distancia', { dist: distancia(r.metres), min: S.minutsAPeu(r.metres) }))).join('');
   caixa.hidden = false;
 }
 
 const LLUNY_METRES = 5000;
+function calculaDistancies() {
+  estat.distancies = S.distanciesAPeu(estat.servei, estat.grafCarrers, estat.ubicacio);
+  // El límit es mesura en línia recta, sense el factor de distància a peu.
+  const recta = Math.min(...parades().slice(0, -1).map((p) => S.distancia(estat.ubicacio, p)));
+  estat.lluny = recta > LLUNY_METRES ? recta : 0;
+}
+
 function localitza() {
   if (!navigator.geolocation) { estat.ubicEstat = 'ubic.noDisponible'; pintaProperes(); return; }
   estat.ubicEstat = 'ubic.buscant';
@@ -260,14 +268,11 @@ function localitza() {
     desa('ubicacio', '1');
     carregaCarrers().then((graf) => {
       estat.ubicacio = ubicacio;
-      estat.distancies = S.distanciesAPeu(estat.servei, graf, ubicacio);
+      estat.grafCarrers = graf;
+      calculaDistancies();
       estat.ubicEstat = '';
-      // Lluny d'Oliva (cap parada a menys de 5 km en línia recta) no es canvia la parada
-      // triada ni es donen minuts a peu: només es diu a quina distància és la més propera.
-      const recta = Math.min.apply(null, parades().slice(0, -1).map((p) => S.distancia(ubicacio, p)));
-      estat.lluny = recta > LLUNY_METRES ? recta : 0;
       if (estat.lluny) { pinta(); return; }
-      tria(S.properes(estat.distancies, 1, !!S.enCurs(estat.servei, estat.festius, Date.now()))[0].parada.num, false);
+      tria(S.properes(estat.distancies, 1, !!S.enCurs(estat.servei, estat.festius, Date.now()))[0].num, false);
     });
   }, (error) => {
     if (error.code === 1) desa('ubicacio', null);
@@ -584,7 +589,13 @@ function carregaDades() {
       if (!sv || !Array.isArray(sv.parades) || sv.parades.length < 2 || !sv.eixides) throw new Error('servei.json');
       // Els festius i els avisos són opcionals: si falten o estan mal escrits, l'app continua.
       const llista = (x, camp) => (x && x.json && Array.isArray(x.json[camp]) ? x.json[camp] : []);
+      const anteriors = estat.servei?.parades ?? [];
       estat.servei = sv;
+      // L'ordre també compta: l'última parada és només d'arribada.
+      if (estat.ubicacio && (anteriors.length !== sv.parades.length || sv.parades.some((p, i) => {
+        const anterior = anteriors[i];
+        return p.num !== anterior.num || p.lat !== anterior.lat || p.lon !== anterior.lon;
+      }))) calculaDistancies();
       estat.festius = new Map(llista(r[1], 'festius').filter((f) => f && f.data && f.nom).map((f) => [f.data, f]));
       estat.festiusComprovat = r[1] && r[1].json ? r[1].json.comprovat : null;
       estat.avisos = llista(r[2], 'avisos').filter((a) => a && a.text && a.inici);

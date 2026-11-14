@@ -37,13 +37,14 @@ after(async () => {
   await srv.tanca();
 });
 
-async function obri({ hora, zona = 'Europe/Madrid', amplada = 360, geolocation, servidor = srv, abans } = {}) {
+async function obri({ hora, zona = 'Europe/Madrid', amplada = 360, geolocation, servidor = srv, abans, serviceWorkers } = {}) {
   const context = await navegador.newContext({
     timezoneId: zona,
     locale: 'ca-ES',
     viewport: { width: amplada, height: 740 },
     geolocation,
     permissions: geolocation ? ['geolocation'] : [],
+    serviceWorkers,
   });
   await context.route(TESSELES, (ruta) => ruta.abort());
   const page = await context.newPage();
@@ -222,6 +223,50 @@ test('6b. Geolocalització lluny d\'Oliva (València) → no canvia la parada tr
   assert.match(r.estat, /^La parada més propera és a \d+,\d km\. Tria la parada a mà\.$/);
   assert.ok(r.properes && r.apeu, 'ni parades més properes ni minuts a peu');
   await context.close();
+});
+
+test('6c. Refrescar les dades després de geolocalitzar conserva la parada i actualitza la distància', async () => {
+  const p8 = parada(8);
+  const dades = structuredClone(servei);
+  const p8Refresc = dades.parades.find((p) => p.num === 8);
+  const { context, page, errors } = await obri({
+    hora: madrid('2026-11-02', '09:00'),
+    geolocation: { latitude: p8.lat, longitude: p8.lon },
+    serviceWorkers: 'block',
+    abans: async (c) => {
+      await c.route('**/data/servei.json', (ruta) => ruta.fulfill({ json: dades }));
+      await c.route('**/data/carrers.json', (ruta) => ruta.fulfill({ json: { nodes: [], arestes: [] } }));
+    },
+  });
+  try {
+    await page.click('#boto-ubicacio');
+    const apeu = page.locator('#ubic-apeu');
+    const detall = page.locator('#llista-properes button[data-num="8"] .detall');
+    await apeu.waitFor();
+    const inicial = await apeu.textContent();
+    assert.match(inicial, /uns 0 min/);
+    assert.match(await detall.textContent(), /^0 m/);
+
+    // El nom permet esperar que cada resposta ja s'haja aplicat a la vista.
+    p8Refresc.nom.va = 'Parada 8 · nom actualitzat';
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await page.getByText(p8Refresc.nom.va, { exact: false }).and(page.locator('#proper-parada')).waitFor();
+    assert.equal(await apeu.textContent(), inicial);
+    assert.match(await detall.textContent(), /^0 m/);
+    assert.deepEqual(errors, []);
+
+    // 0,001 graus de latitud són uns 111 m. Amb el factor 1,3 són 140 m arredonits i 2 min a peu.
+    p8Refresc.lat += 0.001;
+    p8Refresc.nom.va = 'Parada 8 · coordenades actualitzades';
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await page.getByText(p8Refresc.nom.va, { exact: false }).and(page.locator('#proper-parada')).waitFor();
+    assert.equal(await page.locator('#proper-parada').getAttribute('data-num'), '8');
+    assert.match(await apeu.textContent(), /uns 2 min/);
+    assert.match(await detall.textContent(), /^140 m · uns 2 min/);
+    assert.deepEqual(errors, []);
+  } finally {
+    await context.close();
+  }
 });
 
 test('7. De la parada 9 a la parada 1 → arribada aproximada segons els minuts de servei.json', async () => {
