@@ -8,6 +8,7 @@ import { chromium } from 'playwright';
 import { AxeBuilder } from '@axe-core/playwright';
 import { iniciaServidor } from './servidor.mjs';
 import { TEXTOS } from '../js/i18n.js';
+import '../js/valida-dades.js';
 
 const llig = (ruta) => JSON.parse(readFileSync(new URL(ruta, import.meta.url), 'utf8'));
 const servei = llig('../data/servei.json');
@@ -92,6 +93,13 @@ const esperaServiceWorker = (page) => page.evaluate(async () => {
   await navigator.serviceWorker.ready;
   if (!navigator.serviceWorker.controller) {
     await new Promise((resol) => navigator.serviceWorker.addEventListener('controllerchange', resol, { once: true }));
+  }
+});
+
+test('Les dades publicades tenen els camps que utilitza l’app', () => {
+  for (const fitxer of ['servei.json', 'festius.json', 'avisos.json', 'recorregut.geojson', 'carrers.json']) {
+    const ruta = 'data/' + fitxer;
+    assert.ok(globalThis.validaDadesBusOliva(ruta, llig('../' + ruta)), ruta);
   }
 });
 
@@ -322,6 +330,112 @@ test('8. Sense connexió, després d\'una primera visita: pròxim bus i horari v
   const avis = await page.evaluate(() => (document.querySelector('#mapa-avis').hidden ? '' : document.querySelector('#mapa-avis').textContent));
   assert.match(avis, /^Sense connexió: el mapa no es pot carregar/);
   await context.close();
+});
+
+test('8a. El service worker conserva el servei i els festius amb errors HTTP o JSON invàlid', async () => {
+  const errors = new Map();
+  const propi = await iniciaServidor(0, (url, res) => {
+    const resposta = errors.get(url.pathname);
+    if (!resposta) return false;
+    res.writeHead(resposta.status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    res.end(resposta.cos);
+    return true;
+  });
+  const festiu = festius.festius.find((f) => f.data >= servei.vigent_des_de &&
+    [1, 2, 3, 4, 5].includes(new Date(`${f.data}T12:00:00Z`).getUTCDay()));
+  const esperada = servei.eixides.caps_de_setmana_i_festius.find((h) => h >= '08:00');
+  const { context, page } = await obri({ hora: madrid(festiu.data, '08:00'), servidor: propi });
+  try {
+    await esperaServiceWorker(page);
+    const estatXarxa = page.locator('#estat-xarxa');
+    const refresca = () => page.evaluate(() => window.dispatchEvent(new Event('online')));
+
+    // Falla només el calendari. Amb connexió, el pròxim bus continua sent el de festiu.
+    errors.set('/busoliva/data/festius.json', { status: 503, cos: '{}' });
+    await refresca();
+    await estatXarxa.waitFor();
+    assert.match(await estatXarxa.textContent(), /^Es mostren dades desades el /);
+    assert.equal((await proper(page)).hora, esperada);
+
+    // Prova amb una pàgina nova per a comprovar la memòria cau del service worker.
+    errors.set('/busoliva/data/festius.json', { status: 200, cos: '{"festius":[{}]}' });
+    errors.set('/busoliva/data/servei.json', { status: 200, cos: '{' });
+    await page.reload();
+    await page.waitForSelector('#proper-hora[data-hora]');
+    assert.equal((await proper(page)).hora, esperada);
+    assert.match(await estatXarxa.textContent(), /^Es mostren dades desades el /);
+
+    // Ara falla el servei amb 503, i el calendari torna bé. El servei de reserva
+    // encara és vàlid perquè el JSON trencat no l'ha substituït.
+    errors.set('/busoliva/data/servei.json', { status: 503, cos: '{}' });
+    errors.delete('/busoliva/data/festius.json');
+    await page.reload();
+    await page.waitForSelector('#proper-hora[data-hora]');
+    assert.equal((await proper(page)).hora, esperada);
+    assert.match(await estatXarxa.textContent(), /^Es mostren dades desades el /);
+
+    errors.clear();
+    await refresca();
+    await estatXarxa.waitFor({ state: 'hidden' });
+    assert.equal((await proper(page)).hora, esperada);
+  } finally {
+    await context.close();
+    await propi.tanca();
+  }
+});
+
+test('8b. El service worker s’instal·la amb el traçat i els avisos inaccessibles', async () => {
+  let peticionsMapa = 0;
+  const propi = await iniciaServidor(0, (url, res) => {
+    if (url.pathname.endsWith('/recorregut.geojson')) peticionsMapa += 1;
+    else if (!url.pathname.endsWith('/avisos.json')) return false;
+    res.destroy();
+    return true;
+  });
+  const { context, page } = await obri({ hora: madrid('2026-11-02', '09:00'), servidor: propi });
+  try {
+    await esperaServiceWorker(page);
+    assert.equal(peticionsMapa, 0, 'el traçat només es demana en obrir el mapa');
+    assert.match(await page.locator('#estat-xarxa').textContent(), /Els avisos del servei no estan disponibles/);
+    await context.setOffline(true);
+    await page.reload();
+    await page.waitForSelector('#proper-hora[data-hora]');
+    assert.equal((await proper(page)).hora, '09:30');
+  } finally {
+    await context.close();
+    await propi.tanca();
+  }
+});
+
+test('8c. Sense service worker, avisa si falta el calendari i conserva el que ja ha carregat', async () => {
+  let calendari = false;
+  const festiu = festius.festius.find((f) => f.data >= servei.vigent_des_de &&
+    [1, 2, 3, 4, 5].includes(new Date(`${f.data}T12:00:00Z`).getUTCDay()));
+  const esperada = servei.eixides.caps_de_setmana_i_festius.find((h) => h >= '08:00');
+  const { context, page } = await obri({
+    hora: madrid(festiu.data, '08:00'),
+    serviceWorkers: 'block',
+    abans: (c) => c.route('**/data/festius.json', (ruta) => calendari
+      ? ruta.fulfill({ json: festius })
+      : ruta.fulfill({ status: 503 })),
+  });
+  try {
+    const estatXarxa = page.locator('#estat-xarxa');
+    const refresca = () => page.evaluate(() => window.dispatchEvent(new Event('online')));
+    assert.match(await estatXarxa.textContent(), /El calendari de festius no està disponible/);
+    calendari = true;
+    await refresca();
+    await estatXarxa.waitFor({ state: 'hidden' });
+    assert.equal((await proper(page)).hora, esperada);
+
+    calendari = false;
+    await refresca();
+    await estatXarxa.waitFor();
+    assert.match(await estatXarxa.textContent(), /^Es mostren dades desades el /);
+    assert.equal((await proper(page)).hora, esperada);
+  } finally {
+    await context.close();
+  }
 });
 
 test('9. Valencià → castellà → anglès sense claus sense traduir, i l\'idioma es manté', async () => {

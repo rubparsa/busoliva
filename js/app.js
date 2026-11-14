@@ -1,6 +1,7 @@
 import { IDIOMES, DIES, estableixIdioma, idioma, idiomaInicial, iniciaSelectorIdioma, marcaIdioma, durada, t } from './i18n.js';
 import * as S from './servei.js';
 import { pintaDiagrama } from './diagrama.js';
+import './valida-dades.js';
 
 const VISTES = ['proper', 'anar', 'horari', 'mapa', 'linia', 'sobre'];
 const $ = (sel) => document.querySelector(sel);
@@ -10,7 +11,7 @@ const escapa = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;'
 const estat = {
   servei: null, festius: new Map(), avisos: [],
   parada: null, ubicacio: null, ubicEstat: '', desades: null,
-  grafCarrers: null,
+  grafCarrers: null, dades: new Map(),
   vista: 'proper', minut: -1, anunci: '', mapa: null,
 };
 
@@ -513,13 +514,20 @@ function pintaComuns(ara) {
   $('#avisos').innerHTML = estat.avisos
     .filter((a) => a.inici <= avui && (!a.fi || a.fi >= avui))
     .map((a) => '<p class="avis-oficial">' + escapa(a.text[idioma()] || a.text.va || '') + '</p>').join('');
-  const xarxa = $('#estat-xarxa');
-  if (estat.desades) {
-    xarxa.textContent = t('pwa.desades', { data: data(S.diaMadrid(estat.desades)) + ' ' + t('hora.ales', { hora: hora(estat.desades) }) });
-  } else {
-    xarxa.textContent = t('pwa.sensexarxa');
+  const missatges = [];
+  if (estat.desades !== null) {
+    const clau = navigator.onLine ? 'pwa.desadesEnLinia' : 'pwa.desades';
+    missatges.push(t(clau, { data: data(S.diaMadrid(estat.desades)) + ' ' + t('hora.ales', { hora: hora(estat.desades) }) }));
+  } else if (!navigator.onLine) {
+    missatges.push(t('pwa.sensexarxa'));
   }
-  xarxa.hidden = !estat.desades && navigator.onLine;
+  if (!estat.dades.has('festius')) missatges.push(t('pwa.faltenFestius'));
+  if (!estat.dades.has('avisos')) missatges.push(t('pwa.faltenAvisos'));
+
+  const xarxa = $('#estat-xarxa');
+  const textXarxa = missatges.join(' ');
+  if (xarxa.textContent !== textXarxa) xarxa.textContent = textXarxa;
+  xarxa.hidden = !textXarxa;
 }
 
 function pintaSobre() {
@@ -572,40 +580,58 @@ function canviaIdioma(nou) {
 }
 
 // ---------- Dades ----------
-// Si la resposta ve de la còpia del service worker, porta la data en què es va desar.
-function carrega(ruta) {
-  return fetch(ruta, { cache: 'no-cache' }).then((res) => {
+const FITXERS_DADES = ['servei', 'festius', 'avisos'];
+
+// El service worker indica la data de la còpia. Abans que controle la pàgina,
+// una fallada de xarxa encara permet conservar les dades carregades en esta sessió.
+async function carrega(nom) {
+  const ruta = 'data/' + nom + '.json';
+  const control = new AbortController();
+  const limit = setTimeout(() => control.abort(), 6000);
+  try {
+    const res = await fetch(ruta, { cache: 'no-cache', signal: control.signal });
     if (!res.ok) throw new Error(ruta + ': ' + res.status);
-    const desat = res.headers.get('x-desat-el');
-    return res.json().then((json) => ({ json, desat: desat ? Date.parse(desat) : null }));
-  });
+    const json = await res.json();
+    if (!globalThis.validaDadesBusOliva(ruta, json)) throw new Error(ruta);
+    const desat = Date.parse(res.headers.get('x-desat-el'));
+    const deReserva = Number.isFinite(desat);
+    return { json, data: deReserva ? desat : Date.now(), deReserva };
+  } finally {
+    clearTimeout(limit);
+  }
 }
 
-function carregaDades() {
-  const opcional = (ruta) => carrega(ruta).catch(() => null);
-  return Promise.all([carrega('data/servei.json'), opcional('data/festius.json'), opcional('data/avisos.json')])
-    .then((r) => {
-      const sv = r[0].json;
-      if (!sv || !Array.isArray(sv.parades) || sv.parades.length < 2 || !sv.eixides) throw new Error('servei.json');
-      // Els festius i els avisos són opcionals: si falten o estan mal escrits, l'app continua.
-      const llista = (x, camp) => (x && x.json && Array.isArray(x.json[camp]) ? x.json[camp] : []);
-      const anteriors = estat.servei?.parades ?? [];
-      estat.servei = sv;
-      // L'ordre també compta: l'última parada és només d'arribada.
-      if (estat.ubicacio && (anteriors.length !== sv.parades.length || sv.parades.some((p, i) => {
-        const anterior = anteriors[i];
-        return p.num !== anterior.num || p.lat !== anterior.lat || p.lon !== anterior.lon;
-      }))) calculaDistancies();
-      estat.festius = new Map(llista(r[1], 'festius').filter((f) => f && f.data && f.nom).map((f) => [f.data, f]));
-      estat.festiusComprovat = r[1] && r[1].json ? r[1].json.comprovat : null;
-      estat.avisos = llista(r[2], 'avisos').filter((a) => a && a.text && a.inici);
-      estat.desades = r[0].desat;
-      estat.carregat = Date.now();
-      $('#error-dades').hidden = true;
-    });
+async function carregaDades() {
+  await Promise.all(FITXERS_DADES.map(async (nom) => {
+    try {
+      estat.dades.set(nom, await carrega(nom));
+    } catch (error) {
+      const anterior = estat.dades.get(nom);
+      if (anterior) anterior.deReserva = true;
+    }
+  }));
+
+  const sv = estat.dades.get('servei')?.json;
+  if (!sv) throw new Error('servei.json');
+  const anteriors = estat.servei?.parades ?? [];
+  estat.servei = sv;
+  // L'ordre també compta: l'última parada és només d'arribada.
+  if (estat.ubicacio && (anteriors.length !== sv.parades.length || sv.parades.some((p, i) => {
+    const anterior = anteriors[i];
+    return p.num !== anterior.num || p.lat !== anterior.lat || p.lon !== anterior.lon;
+  }))) calculaDistancies();
+
+  const calendari = estat.dades.get('festius')?.json;
+  estat.festius = new Map((calendari?.festius ?? []).map((f) => [f.data, f]));
+  estat.festiusComprovat = calendari?.comprovat;
+  estat.avisos = estat.dades.get('avisos')?.json.avisos ?? [];
+  const dates = [...estat.dades.values()].filter((d) => d.deReserva).map((d) => d.data);
+  estat.desades = dates.length ? Math.min(...dates) : null;
+  estat.carregat = Date.now();
+  $('#error-dades').hidden = true;
 }
 
-// ---------- Service worker i nova versió ----------
+// ---------- Service worker ----------
 function registraServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   let actualitzant = false;
@@ -724,7 +750,7 @@ function refresca(forca) {
   if (carregant) return;
   if (!forca) {
     if (!navigator.onLine || document.hidden) return;
-    if (estat.servei && !estat.desades && Date.now() - estat.carregat < REFRESC) return;
+    if (estat.desades === null && estat.dades.size === FITXERS_DADES.length && Date.now() - estat.carregat < REFRESC) return;
   }
   carregant = true;
   carregaDades().then(() => {
