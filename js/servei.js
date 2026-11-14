@@ -253,8 +253,8 @@ export function distanciesCarrer(graf, pos, parades) {
 export function distanciesAPeu(servei, graf, pos) {
   const carrer = graf ? distanciesCarrer(graf, pos, servei.parades) : [];
   return servei.parades.map((p, i) => (carrer[i] != null
-    ? { parada: p, metres: carrer[i], aprox: false }
-    : { parada: p, metres: distancia(pos, p) * FACTOR_LINIA_RECTA, aprox: true }));
+    ? { num: p.num, metres: carrer[i], aprox: false }
+    : { num: p.num, metres: distancia(pos, p) * FACTOR_LINIA_RECTA, aprox: true }));
 }
 
 // L'última parada només és d'arribada: no compta per a agafar el bus.
@@ -262,10 +262,10 @@ export function distanciesAPeu(servei, graf, pos) {
 // ha eixit fa menys d'una volta, va primer la més avançada en el recorregut (és més
 // probable que encara no hi haja passat); si no, la més pròxima a l'eixida.
 export function properes(distancies, quantes, busEnCurs) {
-  const ordre = distancies.map((d) => d.parada);
+  const ordre = new Map(distancies.map((d, i) => [d.num, i]));
   return distancies.slice(0, -1)
     .sort((a, b) => minutsAPeu(a.metres) - minutsAPeu(b.metres) ||
-      (busEnCurs ? -1 : 1) * (ordre.indexOf(a.parada) - ordre.indexOf(b.parada)) ||
+      (busEnCurs ? -1 : 1) * (ordre.get(a.num) - ordre.get(b.num)) ||
       a.metres - b.metres)
     .slice(0, quantes);
 }
