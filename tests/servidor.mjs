@@ -21,7 +21,7 @@ const TIPUS = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-export function iniciaServidor(port = 0) {
+export function iniciaServidor(port = 0, respon) {
   const comptador = { peticions: 0, bytes: 0, darrera: Date.now() };
   const servidor = createServer(async (req, res) => {
     comptador.peticions += 1;
@@ -32,6 +32,7 @@ export function iniciaServidor(port = 0) {
       res.end();
       return;
     }
+    if (respon?.(url, res)) return;
     let ruta = url.pathname.startsWith(PREFIX) ? decodeURIComponent(url.pathname.slice(PREFIX.length)) : null;
     if (ruta === '' || (ruta && ruta.endsWith('/'))) ruta += 'index.html';
     const fitxer = ruta && normalize(join(ARREL, ruta));
