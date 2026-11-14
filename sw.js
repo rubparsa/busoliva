@@ -4,7 +4,7 @@
 // - Tessel·les del mapa i altres orígens: no es toquen (van directes a la xarxa).
 importScripts('js/valida-dades.js');
 
-const VERSIO = '12';
+const VERSIO = '13';
 const CAU_APP = 'busoliva-app-' + VERSIO;
 const CAU_DADES = 'busoliva-dades';
 const APP = [
