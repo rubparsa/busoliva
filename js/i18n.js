@@ -107,7 +107,7 @@ export const TEXTOS = {
     'mapa.sensexarxa': 'Sense connexió: el mapa no es pot carregar. El diagrama de la línia sí que funciona sense connexió.',
     'mapa.rectes': 'Traçat aproximat: línies rectes entre parades.',
     'mapa.atribucio': "© col·laboradors d'OpenStreetMap",
-    'mapa.tu': 'Tu eres ací',
+    'mapa.tu': 'Estàs ací',
     'mapa.tria': 'Tria aquesta parada',
     'mapa.proper': 'Pròxim bus: {hora}',
     'mapa.veure': 'Veure el pròxim bus',
