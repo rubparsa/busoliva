@@ -57,10 +57,11 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 ## Estat actual
 
 - Auditoria de llançament feta el 15-11-2026 i fusionada en `main`. L’informe `AUDITORIA.md` és només local: està exclòs en `.git/info/exclude` i no es puja al repositori públic.
-- Arreglat: la ubicació només es demana sola si el permís ja està concedit, i les parades intermèdies avisen que l’últim bus encara pot estar de camí (`proper.enCami`). `VERSIO` és `15`.
+- Arreglat: la ubicació només es demana sola si el permís ja està concedit.
+- Arreglat (branca `arreglos-auditoria`): els menús d’idioma i «Aa» es tanquen quan el focus n’ix i no poden estar oberts alhora; el focus de la parada seleccionada en «Línia» té contorn negre en alt contrast; en les parades intermèdies, l’avís `proper.enCami` («El bus que ha eixit de la parada 1 a les X encara pot passar per esta parada») apareix sempre que hi ha una eixida de fa menys d’una volta (60 min), no sols amb l’últim bus. `VERSIO` és `16`.
 - Decisió de l’usuari: no s’afig l’avís «no és oficial» en la pantalla principal.
 - `CLAUDE.md` es manté en el repositori però no es publica en el web (exclòs en el workflow).
-- Queda: revisar la resta de troballes d’`AUDITORIA.md`, la redacció de `proper.enCami` i fer les proves en mòbil real.
+- Queda: integrar la branca en `main` (amb l’aprovació de l’usuari), confirmar la nova redacció de `proper.enCami` i fer les proves en mòbil real.
 
 ## Pendent
 

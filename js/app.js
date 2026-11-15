@@ -199,15 +199,15 @@ function pintaProper(ara) {
   horaEl.setAttribute('data-data', S.diaMadrid(primer.ms));
 
   const avui = S.diaMadrid(ara);
-  if (S.diaMadrid(primer.ms) !== avui) {
-    // En una parada intermèdia, l'última eixida de hui encara pot estar de camí.
-    const curs = senseHoraPas(p) ? S.enCurs(estat.servei, estat.festius, ara) : null;
-    avis.textContent = t('proper.capMes', { quan: quan(primer.ms, p) }) + (curs ? ' ' + t('proper.enCami', { hora: hora(curs.ms) }) : '');
-    avis.hidden = false;
-  } else if (!resta.length || S.diaMadrid(resta[0].ms) !== avui) {
-    avis.textContent = t('proper.ultim');
-    avis.hidden = false;
-  }
+  const parts = [];
+  if (S.diaMadrid(primer.ms) !== avui) parts.push(t('proper.capMes', { quan: quan(primer.ms, p) }));
+  else if (!resta.length || S.diaMadrid(resta[0].ms) !== avui) parts.push(t('proper.ultim'));
+  // En una parada intermèdia, el bus eixit fa menys d'una volta encara pot passar-hi.
+  // Passada la durada de la volta, enCurs ja no el torna.
+  const curs = senseHoraPas(p) ? S.enCurs(estat.servei, estat.festius, ara) : null;
+  if (curs) parts.push(t('proper.enCami', { hora: hora(curs.ms) }));
+  avis.textContent = parts.join(' ');
+  avis.hidden = !parts.length;
   $('#proper-seguents').innerHTML = resta.length
     ? '<span>' + escapa(t('proper.despres')) + ':</span> <ul>' + resta.map((r) => '<li>' + escapa(quanCurt(r.ms, p)) + '</li>').join('') + '</ul>'
     : '';
@@ -689,10 +689,16 @@ function inicia() {
     ajustosBoto.setAttribute('aria-expanded', String(obri));
     if (obri) ajustos.querySelector('button').focus();
   });
+  // Es tanca en fer clic fora (també en el selector d'idioma, perquè no queden oberts
+  // els dos menús) i quan el focus ix del menú.
+  const dinsAjustos = (el) => !!el && (ajustos.contains(el) || ajustosBoto.contains(el));
   document.addEventListener('click', (e) => {
-    if (ajustos.classList.contains('obert') && !(e.target.closest && e.target.closest('.eines-cap'))) tancaAjustos(false);
+    if (ajustos.classList.contains('obert') && !dinsAjustos(e.target)) tancaAjustos(false);
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ajustos.classList.contains('obert')) tancaAjustos(true); });
+  [ajustos, ajustosBoto].forEach((el) => el.addEventListener('focusout', (e) => {
+    if (ajustos.classList.contains('obert') && e.relatedTarget && !dinsAjustos(e.relatedTarget)) tancaAjustos(false);
+  }));
   $('#boto-ubicacio').addEventListener('click', localitza);
   $('#boto-favorita').addEventListener('click', commutaFavorita);
   $('#boto-comparteix').addEventListener('click', comparteix);

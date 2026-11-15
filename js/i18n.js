@@ -43,7 +43,7 @@ export const TEXTOS = {
     'proper.despres': 'Després',
     'proper.ultim': 'Últim bus de hui.',
     'proper.capMes': 'Hui ja no hi ha més busos: {quan}.',
-    'proper.enCami': 'El bus que ha eixit de la parada 1 a les {hora} encara pot estar fent la volta.',
+    'proper.enCami': 'El bus que ha eixit de la parada 1 a les {hora} encara pot passar per esta parada.',
     'proper.finalitzat': 'Servei finalitzat. Consulta oliva.es.',
     'proper.capBus': 'No hi ha cap bus previst en els pròxims dies.',
     'proper.eixidaParada1': "És l'hora d'eixida de la parada 1, {nom}. La volta completa dura aproximadament {durada}.",
@@ -202,7 +202,7 @@ export const TEXTOS = {
     'proper.despres': 'Después',
     'proper.ultim': 'Último autobús de hoy.',
     'proper.capMes': 'Hoy ya no hay más autobuses: {quan}.',
-    'proper.enCami': 'El autobús que ha salido de la parada 1 a las {hora} todavía puede estar haciendo la vuelta.',
+    'proper.enCami': 'El autobús que ha salido de la parada 1 a las {hora} todavía puede pasar por esta parada.',
     'proper.finalitzat': 'Servicio finalizado. Consulta oliva.es.',
     'proper.capBus': 'No hay ningún autobús previsto en los próximos días.',
     'proper.eixidaParada1': 'Es la hora de salida de la parada 1, {nom}. La vuelta completa dura aproximadamente {durada}.',
@@ -361,7 +361,7 @@ export const TEXTOS = {
     'proper.despres': 'After that',
     'proper.ultim': 'Last bus today.',
     'proper.capMes': 'No more buses today: {quan}.',
-    'proper.enCami': 'The bus that left stop 1 at {hora} may still be on its way round.',
+    'proper.enCami': 'The bus that left stop 1 at {hora} may not have reached this stop yet.',
     'proper.finalitzat': 'This service has ended. Check oliva.es.',
     'proper.capBus': 'No buses are scheduled in the next few days.',
     'proper.eixidaParada1': 'This is the departure time from stop 1, {nom}. A full loop takes about {durada}.',
@@ -516,6 +516,11 @@ export function iniciaSelectorIdioma(canvia) {
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !menu.hidden) tanca(true);
+  });
+  // Si el focus ix del selector (amb Tab, per exemple), es tanca perquè no tape res.
+  // Sense relatedTarget (clic en una zona no enfocable) ja ho resol el clic de fora.
+  boto.parentElement.addEventListener('focusout', (e) => {
+    if (!menu.hidden && e.relatedTarget && !boto.parentElement.contains(e.relatedTarget)) tanca(false);
   });
 }
 
