@@ -126,6 +126,19 @@ test('2. Divendres 2026-11-06 a les 18:40, parada 1 → pròxim bus dissabte a l
   await context.close();
 });
 
+test('2b. Després de l\'última eixida, una parada intermèdia avisa que el bus encara pot estar de camí', async () => {
+  const { context, page } = await obri({ hora: madrid('2026-11-06', '18:40') });
+  await triaParada(page, 15);
+  assert.equal((await proper(page)).avis,
+    'Hui ja no hi ha més busos: demà a les 9.00. El bus que ha eixit de la parada 1 a les 18.30 encara pot estar fent la volta.');
+  await context.close();
+  // Passada la durada de la volta (60 min), ja no s'avisa.
+  const tard = await obri({ hora: madrid('2026-11-06', '19:31') });
+  await triaParada(tard.page, 15);
+  assert.equal((await proper(tard.page)).avis, 'Hui ja no hi ha més busos: demà a les 9.00.');
+  await tard.context.close();
+});
+
 test('3. Dissabte 2026-11-07 a les 10:00, parada 1 → 11.00', async () => {
   const { context, page } = await obri({ hora: madrid('2026-11-07', '10:00') });
   await triaParada(page, 1);

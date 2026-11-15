@@ -200,7 +200,9 @@ function pintaProper(ara) {
 
   const avui = S.diaMadrid(ara);
   if (S.diaMadrid(primer.ms) !== avui) {
-    avis.textContent = t('proper.capMes', { quan: quan(primer.ms, p) });
+    // En una parada intermèdia, l'última eixida de hui encara pot estar de camí.
+    const curs = senseHoraPas(p) ? S.enCurs(estat.servei, estat.festius, ara) : null;
+    avis.textContent = t('proper.capMes', { quan: quan(primer.ms, p) }) + (curs ? ' ' + t('proper.enCami', { hora: hora(curs.ms) }) : '');
     avis.hidden = false;
   } else if (!resta.length || S.diaMadrid(resta[0].ms) !== avui) {
     avis.textContent = t('proper.ultim');
