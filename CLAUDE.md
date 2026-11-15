@@ -54,6 +54,14 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 - En entorns amb servidor intermediari, els scripts que fan peticions de xarxa poden necessitar `NODE_USE_ENV_PROXY=1`. Overpass respon 406 si la petició porta el `User-Agent` per defecte de Node; per això `eines/genera-carrers.mjs` n’envia un de propi.
 - El workflow **Tests i publicació** executa les proves en cada *push* i *pull request*. El treball `publica` només s’executa en un *push* a `main` si passa `tests`. L’origen de Pages ha de ser **GitHub Actions**.
 
+## Estat actual
+
+- Auditoria de llançament feta el 15-11-2026 i fusionada en `main`. L’informe `AUDITORIA.md` és només local: està exclòs en `.git/info/exclude` i no es puja al repositori públic.
+- Arreglat: la ubicació només es demana sola si el permís ja està concedit, i les parades intermèdies avisen que l’últim bus encara pot estar de camí (`proper.enCami`). `VERSIO` és `15`.
+- Decisió de l’usuari: no s’afig l’avís «no és oficial» en la pantalla principal.
+- `CLAUDE.md` es manté en el repositori però no es publica en el web (exclòs en el workflow).
+- Queda: revisar la resta de troballes d’`AUDITORIA.md`, la redacció de `proper.enCami` i fer les proves en mòbil real.
+
 ## Pendent
 
 - Incorporar els festius locals d’Oliva de 2027 quan es confirmen.
