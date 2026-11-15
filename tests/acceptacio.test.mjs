@@ -130,13 +130,24 @@ test('2b. Després de l\'última eixida, una parada intermèdia avisa que el bus
   const { context, page } = await obri({ hora: madrid('2026-11-06', '18:40') });
   await triaParada(page, 15);
   assert.equal((await proper(page)).avis,
-    'Hui ja no hi ha més busos: demà a les 9.00. El bus que ha eixit de la parada 1 a les 18.30 encara pot estar fent la volta.');
+    'Hui ja no hi ha més busos: demà a les 9.00. El bus que ha eixit de la parada 1 a les 18.30 encara pot passar per esta parada.');
   await context.close();
   // Passada la durada de la volta (60 min), ja no s'avisa.
   const tard = await obri({ hora: madrid('2026-11-06', '19:31') });
   await triaParada(tard.page, 15);
   assert.equal((await proper(tard.page)).avis, 'Hui ja no hi ha més busos: demà a les 9.00.');
   await tard.context.close();
+});
+
+test("2c. Amb un bus fent la volta, el compte enrere d'una parada intermèdia avisa que encara pot passar", async () => {
+  const { context, page } = await obri({ hora: madrid('2026-11-02', '07:45') });
+  await triaParada(page, 10);
+  const r = await proper(page);
+  assert.equal(r.minuts, '45');
+  assert.equal(r.avis, 'El bus que ha eixit de la parada 1 a les 7.30 encara pot passar per esta parada.');
+  await triaParada(page, 1);
+  assert.equal((await proper(page)).avis, '', 'en la parada 1 no cal');
+  await context.close();
 });
 
 test('3. Dissabte 2026-11-07 a les 10:00, parada 1 → 11.00', async () => {
@@ -515,6 +526,43 @@ test('9. Valencià → castellà → anglès sense claus sense traduir, i l\'idi
   await page.waitForSelector('#proper-parada[data-num]');
   const desat = await page.evaluate(() => ({ lang: document.documentElement.lang, nav: document.querySelector('a[data-vista="horari"]').textContent }));
   assert.deepEqual(desat, { lang: 'en', nav: 'Timetable' });
+  await context.close();
+});
+
+test("9b. Els menús d'idioma i «Aa» es tanquen en eixir-ne amb Tab i no queden oberts alhora", async () => {
+  const { context, page } = await obri({ hora: madrid('2026-11-02', '10:00') });
+  const obert = () => page.evaluate(() => ({
+    idioma: !document.querySelector('#idioma-menu').hidden,
+    aa: document.querySelector('#ajustos').classList.contains('obert'),
+  }));
+  await page.click('#ajustos-boto');
+  assert.deepEqual(await obert(), { idioma: false, aa: true });
+  await page.click('#idioma-boto');
+  assert.deepEqual(await obert(), { idioma: true, aa: false });
+  await page.click('#ajustos-boto');
+  assert.deepEqual(await obert(), { idioma: false, aa: true });
+  // Tab des de l'última opció d'«Aa» ix del menú i el tanca.
+  await page.focus('#ajustos [data-mode="fosc"]');
+  await page.keyboard.press('Tab');
+  assert.deepEqual(await obert(), { idioma: false, aa: false });
+  // Tab des de l'última opció d'idioma també.
+  await page.click('#idioma-boto');
+  await page.focus('#idioma-menu [data-idioma="en"]');
+  await page.keyboard.press('Tab');
+  assert.deepEqual(await obert(), { idioma: false, aa: false });
+  await context.close();
+});
+
+test('9c. En alt contrast, el focus de la parada seleccionada en «Línia» té el contorn negre', async () => {
+  const { context, page } = await obri({ hora: madrid('2026-11-02', '10:00') });
+  await vesA(page, 'linia');
+  const ombra = await page.evaluate(() => {
+    document.documentElement.classList.add('alt-contrast');
+    const b = document.querySelector('.linia-text .parada[aria-current="true"]');
+    b.focus();
+    return getComputedStyle(b).boxShadow;
+  });
+  assert.match(ombra, /rgb\(0, 0, 0\) 0px 0px 0px 7px/);
   await context.close();
 });
 

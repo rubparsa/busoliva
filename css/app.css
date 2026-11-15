@@ -335,6 +335,7 @@ table.horari { width: 100%; border-collapse: collapse; background: var(--blanc);
 .linia-text { align-self: center; min-width: 0; padding: .25rem 0 .25rem .5rem; word-break: break-word; overflow-wrap: anywhere; }
 .linia-text .parada { display: inline; width: auto; min-height: 44px; padding: .5rem .25rem; border: 0; background: none; text-decoration: underline; color: var(--mar); }
 .linia-text .parada[aria-current="true"] { box-shadow: none; font-weight: 700; }
+html.alt-contrast .linia-text .parada:focus { box-shadow: 0 0 0 7px #000; }
 .linia-min, .linia-nota { display: block; font-size: .875rem; }
 
 @media (prefers-reduced-motion: reduce) {
