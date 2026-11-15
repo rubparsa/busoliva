@@ -68,7 +68,7 @@ Per a corregir coordenades i minuts, useu l'**editor de parades**:
 1. `npm start` i obriu <http://localhost:8080/busoliva/eines/editor-parades.html>.
 2. Arrossegueu cada marcador fins a la parada real. Si sabeu els minuts de pas, poseu-los (i marqueu «Estimat» si no són oficials); si no, deixeu-los buits.
 3. Toqueu «Exporta servei.json» i substituïu `data/servei.json` pel fitxer baixat.
-4. Executeu `npm run recorregut` per a tornar a generar el traçat del mapa (`data/recorregut.geojson`). Amb connexió, es calcula per carrers amb OSRM; sense connexió, es desen línies rectes i el mapa ho avisa. L'app no crida mai OSRM mentre funciona.
+4. Executeu `npm run recorregut` per a tornar a generar el traçat del mapa (`data/recorregut.geojson`). Amb connexió, es calcula per carrers amb OSRM; sense connexió, es desen línies rectes i el mapa ho avisa. L'app no crida mai OSRM mentre funciona. Si OSRM tria un carrer que no és el del bus, afegiu punts de pas en `PUNTS_DE_PAS`, dins de `eines/genera-recorregut.mjs`.
 5. Si canvia la numeració de les parades, executeu `npm run qr` per a tornar a fer els codis QR dels cartells.
 
 ### Xarxa de carrers: `data/carrers.json`

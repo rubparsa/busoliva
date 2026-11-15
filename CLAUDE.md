@@ -16,7 +16,7 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 - **Hores de pas.** `minuts_des_de_eixida` és `0` en la parada 1 i `null` en la resta. En les parades intermèdies, l’app mostra l’hora d’eixida des de la parada 1 i ho indica. `durada_volta_minuts` val `60` perquè l’avís municipal diu que la volta dura aproximadament una hora.
 - **`data/festius.json`** recull festius nacionals i autonòmics de 2026 i 2027. Els locals d’Oliva de 2026 són el 17 de juliol i el 8 de setembre. El 7 de desembre de 2026 es tracta com a dia laborable.
 - **`data/avisos.json`** està buit a petició de l’usuari. L’enllaç «Avisa d’un error» usa el `mailto:` configurat en `servei.json`.
-- **`data/recorregut.geojson`** conté el traçat calculat amb OSRM. L’app llig el fitxer local i mostra el mapa amb Leaflet i OpenStreetMap.
+- **`data/recorregut.geojson`** conté el traçat calculat amb OSRM. Els punts de pas de `PUNTS_DE_PAS` (en `eines/genera-recorregut.mjs`) forcen el carrer correcte quan OSRM en tria un altre: de la 8 a la 9, el bus baixa pel carrer de l’Aigua Blanca i gira pel de la Comarca de la Marina. L’app llig el fitxer local i mostra el mapa amb Leaflet i OpenStreetMap.
 - **`data/carrers.json`** conté la xarxa de carrers d’OpenStreetMap, generada amb `npm run carrers`. L’app hi calcula la distància a peu. Si el fitxer estiguera buit, usaria la línia recta multiplicada per 1,3 i la marcaria com a aproximada.
 - Les coordenades de les 20 parades estan verificades per l’usuari. La 11 no coincideix amb el GTFS d’estiu: és correcta així.
 
@@ -61,6 +61,7 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 - Arreglat (branca `arreglos-auditoria`): els menús d’idioma i «Aa» es tanquen quan el focus n’ix i no poden estar oberts alhora; el focus de la parada seleccionada en «Línia» té contorn negre en alt contrast; en les parades intermèdies, l’avís `proper.enCami` («El bus que ha eixit de la parada 1 a les X encara pot passar per esta parada») apareix sempre que hi ha una eixida de fa menys d’una volta (60 min), no sols amb l’últim bus. `VERSIO` és `16`.
 - Decisió de l’usuari: no s’afig l’avís «no és oficial» en la pantalla principal.
 - `CLAUDE.md` es manté en el repositori però no es publica en el web (exclòs en el workflow).
+- Corregit (branca `arreglos-auditoria`): el traçat de la 8 a la 9 va pel carrer de l’Aigua Blanca i la Comarca de la Marina, segons l’usuari.
 - Queda: integrar la branca en `main` (amb l’aprovació de l’usuari), confirmar la nova redacció de `proper.enCami` i fer les proves en mòbil real.
 
 ## Pendent
