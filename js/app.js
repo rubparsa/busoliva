@@ -266,7 +266,6 @@ function localitza() {
   pintaProperes();
   navigator.geolocation.getCurrentPosition((pos) => {
     const ubicacio = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-    desa('ubicacio', '1');
     carregaCarrers().then((graf) => {
       estat.ubicacio = ubicacio;
       estat.grafCarrers = graf;
@@ -276,7 +275,6 @@ function localitza() {
       tria(S.properes(estat.distancies, 1, !!S.enCurs(estat.servei, estat.festius, Date.now()))[0].num, false);
     });
   }, (error) => {
-    if (error.code === 1) desa('ubicacio', null);
     estat.ubicEstat = error.code === 1 ? 'ubic.denegat' : 'ubic.error';
     pintaProperes();
   }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
@@ -295,9 +293,10 @@ function carregaCarrers() {
   return carrers;
 }
 
-// Si ja hi ha permís, es busca la parada més propera en obrir l'app.
+// Si ja hi ha permís, es busca la parada més propera en obrir l'app. Només quan el
+// navegador confirma que el permís està concedit: així el diàleg de permís no ix mai
+// sense que l'usuari haja tocat el botó.
 function localitzaSiHiHaPermis() {
-  if (llig('ubicacio') === '1') { localitza(); return; }
   if (navigator.permissions && navigator.permissions.query) {
     navigator.permissions.query({ name: 'geolocation' })
       .then((r) => { if (r.state === 'granted') localitza(); })

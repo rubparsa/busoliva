@@ -238,6 +238,25 @@ test('6b. Geolocalització lluny d\'Oliva (València) → no canvia la parada tr
   await context.close();
 });
 
+test('6d. En obrir l\'app, la ubicació només es demana sola si el permís ja està concedit', async () => {
+  const compta = (c) => c.addInitScript(() => {
+    localStorage.setItem('busoliva.ubicacio', '1'); // marca que deixaven les versions anteriors
+    window.peticionsUbicacio = 0;
+    const original = navigator.geolocation.getCurrentPosition.bind(navigator.geolocation);
+    navigator.geolocation.getCurrentPosition = (...args) => { window.peticionsUbicacio++; return original(...args); };
+  });
+  const sense = await obri({ hora: madrid('2026-11-02', '09:00'), abans: compta });
+  await sense.page.waitForTimeout(300);
+  assert.equal(await sense.page.evaluate(() => window.peticionsUbicacio), 0, 'sense permís concedit no es demana la ubicació');
+  await sense.context.close();
+
+  const p8 = parada(8);
+  const amb = await obri({ hora: madrid('2026-11-02', '09:00'), geolocation: { latitude: p8.lat, longitude: p8.lon }, abans: compta });
+  await amb.page.waitForFunction(() => document.querySelector('#proper-parada').dataset.num === '8');
+  assert.equal(await amb.page.evaluate(() => window.peticionsUbicacio), 1);
+  await amb.context.close();
+});
+
 test('6c. Refrescar les dades després de geolocalitzar conserva la parada i actualitza la distància', async () => {
   const p8 = parada(8);
   const dades = structuredClone(servei);
