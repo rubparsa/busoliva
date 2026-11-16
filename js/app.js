@@ -268,6 +268,7 @@ function localitza() {
   pintaProperes();
   navigator.geolocation.getCurrentPosition((pos) => {
     const ubicacio = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    if (!estat.servei) { estat.ubicEstat = 'error.dades'; pintaProperes(); return; }
     carregaCarrers().then((graf) => {
       estat.ubicacio = ubicacio;
       estat.grafCarrers = graf;
@@ -568,13 +569,18 @@ function mostraVista(vista, mouFocus) {
     if (a.getAttribute('data-vista') === vista) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
+  posaTitol();
   pinta();
   if (mouFocus) $('#t-' + vista).focus();
 }
 
+function posaTitol() {
+  document.title = t('nav.' + estat.vista) + ' · ' + t('doc.titol');
+}
+
 function aplicaTextos() {
   document.documentElement.lang = IDIOMES[idioma()];
-  document.title = t('doc.titol');
+  posaTitol();
   $$('[data-i18n]').forEach((el) => { el.textContent = t(el.getAttribute('data-i18n')); });
   $$('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
   marcaIdioma();
