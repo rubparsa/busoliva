@@ -370,11 +370,19 @@ function aplicaModes() {
 // ---------- Instal·lació ----------
 let peticioInstal = null;
 const installada = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-// En Android s'usa el diàleg del navegador; si no n'hi ha (iPhone), les instruccions de «Sobre l'app».
+// iPhone i iPad (l'iPadOS d'escriptori es presenta com a Mac amb pantalla tàctil).
+const esIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+// El botó només es mostra si fa alguna cosa: el diàleg dels navegadors Chromium
+// (que no l'oferixen si l'app ja està instal·lada) o les instruccions d'iOS.
+// En Firefox i Safari de Mac no hi ha diàleg i el botó queda amagat.
+const potInstallar = () => !installada() && (peticioInstal !== null || esIOS());
+const actualitzaBotoInstalla = () => { $('#boto-installa').hidden = !potInstallar(); };
 function installa() {
   if (peticioInstal) {
-    peticioInstal.prompt();
+    const peticio = peticioInstal;
     peticioInstal = null;
+    peticio.prompt();
+    actualitzaBotoInstalla();
     return;
   }
   if (location.hash !== '#sobre') location.hash = '#sobre';
@@ -511,7 +519,7 @@ function pintaComuns(ara) {
   const error = $('#avisa-error');
   error.hidden = !sv.contacte;
   if (sv.contacte) error.href = sv.contacte;
-  $('#boto-installa').hidden = installada();
+  actualitzaBotoInstalla();
   $('#avisos').innerHTML = estat.avisos
     .filter((a) => a.inici <= avui && (!a.fi || a.fi >= avui))
     .map((a) => '<p class="avis-oficial">' + escapa(a.text[idioma()] || a.text.va || '') + '</p>').join('');
@@ -709,7 +717,8 @@ function inicia() {
   // El títol de la capçalera torna sempre a «Pròxim bus».
   $('.marca').addEventListener('click', () => { if (location.hash === '#proper') mostraVista('proper', true); });
   $('#vorera-boto').addEventListener('click', (e) => tria(+e.currentTarget.getAttribute('data-num'), true));
-  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); peticioInstal = e; });
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); peticioInstal = e; actualitzaBotoInstalla(); });
+  window.addEventListener('appinstalled', () => { peticioInstal = null; actualitzaBotoInstalla(); });
   $('#boto-installa').addEventListener('click', installa);
   window.addEventListener('hashchange', () => {
     const v = location.hash.slice(1);

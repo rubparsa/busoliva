@@ -16,7 +16,7 @@ L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial,
 - **Sense connexió**: funciona tot menys el mapa i avisa de la data de les dades desades. Avisa quan hi ha una versió nova i explica com instal·lar-la en iOS.
 - **Parada de l'altra vorera**: en les parades que tenen una germana a l'altra vorera (5/14, 6/13, 7/12), l'app la mostra amb el seu sentit i les parades següents.
 - **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`).
-- En la capçalera: **alt contrast**, **text gran**, **mode fosc** (per defecte segueix el del mòbil) i idioma. Al peu: «Sobre l'app», «Avisa d'un error» i «Instal·la l'app».
+- En la capçalera: **alt contrast**, **text gran**, **mode fosc** (per defecte segueix el del mòbil) i idioma. Al peu: «Sobre l'app», «Avisa d'un error» i «Instal·la l'app». Este últim només apareix si el navegador oferix el diàleg d'instal·lació (Chrome, Edge… quan l'app encara no hi està instal·lada) o en iPhone i iPad, on porta a les instruccions. En Firefox i Safari de Mac queda amagat.
 
 ## Estructura
 

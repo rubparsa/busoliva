@@ -553,6 +553,54 @@ test("9b. Els menús d'idioma i «Aa» es tanquen en eixir-ne amb Tab i no quede
   await context.close();
 });
 
+test("9d. «Instal·la l'app» només es mostra si hi ha diàleg del navegador o en iOS", async () => {
+  // Bloqueja el beforeinstallprompt real perquè la prova no depenga de Chromium.
+  const blocaReal = (context) => context.addInitScript(() => {
+    window.addEventListener('beforeinstallprompt', (e) => { if (e.isTrusted) e.stopImmediatePropagation(); }, true);
+  });
+  const visible = (page) => page.evaluate(() => !document.querySelector('#boto-installa').hidden);
+
+  // Escriptori sense diàleg (Firefox, o Chrome amb l'app ja instal·lada): ocult.
+  const { context, page } = await obri({ hora: madrid('2026-11-02', '10:00'), abans: blocaReal });
+  assert.equal(await visible(page), false, 'sense diàleg, el botó no es mostra');
+  // Arriba el diàleg: es mostra, el clic el crida i després s'amaga.
+  await page.evaluate(() => {
+    const e = new Event('beforeinstallprompt', { cancelable: true });
+    e.prompt = () => { window.__cridat = true; return Promise.resolve(); };
+    window.dispatchEvent(e);
+  });
+  assert.equal(await visible(page), true, 'amb diàleg, el botó es mostra');
+  await page.click('#boto-installa');
+  assert.equal(await page.evaluate(() => window.__cridat), true);
+  assert.equal(await visible(page), false, 'després del diàleg, el botó s\'amaga');
+  assert.notEqual(await page.evaluate(() => location.hash), '#sobre');
+  // appinstalled també l'amaga.
+  await page.evaluate(() => {
+    const e = new Event('beforeinstallprompt', { cancelable: true });
+    e.prompt = () => Promise.resolve();
+    window.dispatchEvent(e);
+    window.dispatchEvent(new Event('appinstalled'));
+  });
+  assert.equal(await visible(page), false, 'després d\'instal·lar, el botó s\'amaga');
+  await context.close();
+
+  // iPhone: es mostra i porta a les instruccions de «Sobre l'app».
+  const ios = await navegador.newContext({
+    locale: 'ca-ES',
+    viewport: { width: 360, height: 740 },
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+  });
+  await blocaReal(ios);
+  const pIos = await ios.newPage();
+  await pIos.clock.setFixedTime(madrid('2026-11-02', '10:00'));
+  await pIos.goto(srv.url);
+  await pIos.waitForSelector('#proper-parada[data-num]', { state: 'attached' });
+  assert.equal(await visible(pIos), true, 'en iOS, el botó es mostra');
+  await pIos.click('#boto-installa');
+  await pIos.waitForFunction(() => location.hash === '#sobre' && document.activeElement.id === 'installa-ios');
+  await ios.close();
+});
+
 test('9c. En alt contrast, el focus de la parada seleccionada en «Línia» té el contorn negre', async () => {
   const { context, page } = await obri({ hora: madrid('2026-11-02', '10:00') });
   await vesA(page, 'linia');
