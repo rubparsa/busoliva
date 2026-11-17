@@ -98,6 +98,12 @@ function crea() {
   const L = window.L;
   const redueix = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   mapa = L.map('mapa', { zoomAnimation: !redueix, fadeAnimation: !redueix, markerZoomAnimation: !redueix, inertia: !redueix });
+  // Leaflet anima el desplaçament amb les fletxes del teclat i no té cap opció per a evitar-ho.
+  if (redueix) {
+    const panBy = mapa.panBy;
+    mapa.panBy = (offset, opcions) => panBy.call(mapa, offset, Object.assign({}, opcions, { animate: false }));
+  }
+  mapa.attributionControl.setPrefix(false);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -124,6 +130,12 @@ function actualitza() {
     el.classList.toggle('sel', x.parades.some((p) => p.num === ctx.parada));
     el.setAttribute('title', nom);
     el.setAttribute('aria-label', nom);
+  });
+  [['.leaflet-control-zoom-in', 'mapa.apropa'], ['.leaflet-control-zoom-out', 'mapa.allunya']].forEach(([sel, clau]) => {
+    const boto = mapa.getContainer().querySelector(sel);
+    if (!boto) return;
+    boto.setAttribute('title', ctx.t(clau));
+    boto.setAttribute('aria-label', ctx.t(clau));
   });
   if (ctx.ubicacio) {
     const lloc = [ctx.ubicacio.lat, ctx.ubicacio.lon];

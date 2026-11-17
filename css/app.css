@@ -246,6 +246,7 @@ html.text-gran { font-size: 125%; }
   --cap-fons: #08121C; --cap-text: #EDE6D6; --linia: #2B4157; --destacat: #4A3D10; --mapa-fons: #1D2F40;
   color-scheme: dark;
   }
+  html:not(.clar):not(.alt-contrast) .mapa.leaflet-container { background: var(--mapa-fons); }
 }
 @media screen {
   html.fosc {
@@ -256,6 +257,7 @@ html.text-gran { font-size: 125%; }
   }
   html.fosc .leaflet-popup-content-wrapper, html.fosc .leaflet-popup-tip,
   html.fosc .mapa .leaflet-control-attribution { background: var(--blanc); color: var(--ink); }
+  html.fosc:not(.alt-contrast) .mapa.leaflet-container { background: var(--mapa-fons); }
 }
 
 html.alt-contrast {
