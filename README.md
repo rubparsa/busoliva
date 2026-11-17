@@ -16,7 +16,7 @@ L'app **no sap on és l'autobús**: tot es calcula a partir de l'horari oficial,
 - **Sense connexió**: funciona tot menys el mapa i avisa de la data de les dades desades. Avisa quan hi ha una versió nova i explica com instal·lar-la en iOS.
 - **Parada de l'altra vorera**: en les parades que tenen una germana a l'altra vorera (5/14, 6/13, 7/12), l'app la mostra amb el seu sentit i les parades següents.
 - **Favorites** (fins a 3), **compartir una parada** (`?parada=N`), **cartells A4 amb codi QR** (`cartells.html`).
-- En la capçalera: **alt contrast**, **text gran**, **mode fosc** (per defecte segueix el del mòbil) i idioma. Al peu: «Sobre l'app», «Avisa d'un error» i «Instal·la l'app».
+- En la capçalera: **alt contrast**, **text gran**, **mode fosc** (per defecte segueix el del mòbil) i idioma. Al peu: «Sobre l'app», «Avisa d'un error» i «Instal·la l'app». Este últim només apareix si el navegador oferix el diàleg d'instal·lació (Chrome, Edge… quan l'app encara no hi està instal·lada) o en iPhone i iPad, on porta a les instruccions. En Firefox i Safari de Mac queda amagat.
 
 ## Estructura
 
@@ -68,7 +68,7 @@ Per a corregir coordenades i minuts, useu l'**editor de parades**:
 1. `npm start` i obriu <http://localhost:8080/busoliva/eines/editor-parades.html>.
 2. Arrossegueu cada marcador fins a la parada real. Si sabeu els minuts de pas, poseu-los (i marqueu «Estimat» si no són oficials); si no, deixeu-los buits.
 3. Toqueu «Exporta servei.json» i substituïu `data/servei.json` pel fitxer baixat.
-4. Executeu `npm run recorregut` per a tornar a generar el traçat del mapa (`data/recorregut.geojson`). Amb connexió, es calcula per carrers amb OSRM; sense connexió, es desen línies rectes i el mapa ho avisa. L'app no crida mai OSRM mentre funciona.
+4. Executeu `npm run recorregut` per a tornar a generar el traçat del mapa (`data/recorregut.geojson`). Amb connexió, es calcula per carrers amb OSRM; sense connexió, es desen línies rectes i el mapa ho avisa. L'app no crida mai OSRM mentre funciona. Si OSRM tria un carrer que no és el del bus, afegiu punts de pas en `PUNTS_DE_PAS`, dins de `eines/genera-recorregut.mjs`.
 5. Si canvia la numeració de les parades, executeu `npm run qr` per a tornar a fer els codis QR dels cartells.
 
 ### Xarxa de carrers: `data/carrers.json`

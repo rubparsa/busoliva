@@ -6,7 +6,13 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const servei = JSON.parse(readFileSync(new URL('../data/servei.json', import.meta.url), 'utf8'));
-const punts = servei.parades.map((p) => [p.lon, p.lat]);
+// Punts de pas obligat entre parades, per a forçar el carrer per on va el bus
+// quan OSRM en tria un altre. La clau és el número de la parada d'on ix el tram.
+const PUNTS_DE_PAS = {
+  // De la 8 a la 9: baixa pel carrer de l'Aigua Blanca i gira pel de la Comarca de la Marina.
+  8: [[-0.08642, 38.92129], [-0.0849, 38.91953], [-0.08319, 38.91861]],
+};
+const punts = servei.parades.flatMap((p) => [[p.lon, p.lat], ...(PUNTS_DE_PAS[p.num] || [])]);
 const arrodoneix = (c) => [+c[0].toFixed(5), +c[1].toFixed(5)];
 
 let coordenades = punts.map(arrodoneix);
