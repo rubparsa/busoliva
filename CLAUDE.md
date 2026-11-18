@@ -65,7 +65,7 @@ PWA no oficial per a consultar el servei especial d’autobús entre el poble i 
 - Decisió de l’usuari: no s’afig l’avís «no és oficial» en la pantalla principal.
 - `CLAUDE.md` es manté en el repositori però no es publica en el web (exclòs en el workflow).
 - Corregit: el traçat de la 8 a la 9 va pel carrer de l’Aigua Blanca i la Comarca de la Marina, segons l’usuari.
-- Tot està fusionat en `main` i publicat el 18-11-2026; no queden altres branques. Queda: confirmar la redacció de `proper.enCami` i de `sobre.estimades`, i fer les proves en mòbil real.
+- Tot està fusionat en `main` i pujat a GitHub el 18-11-2026; no queden altres branques. El desplegament en Pages falla des d’aleshores: GitHub considera «en curs» el desplegament cancel·lat `a83abad` i rebutja els nous (el web encara serveix `VERSIO` 16). Queda: tornar a publicar quan GitHub l’allibere, confirmar la redacció de `proper.enCami` i de `sobre.estimades`, i fer les proves en mòbil real.
 
 ## Pendent
 
